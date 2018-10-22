@@ -1,5 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
+
+// material-ui components
 import { withStyles } from "@material-ui/core/styles";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import Toolbar from "@material-ui/core/Toolbar";
@@ -19,8 +21,16 @@ import post1 from "../../common/components/markdown/mock/blog-post.1.md";
 import post2 from "../../common/components/markdown/mock/blog-post.2.md";
 import post3 from "../../common/components/markdown/mock/blog-post.3.md";
 import Modal from "@material-ui/core/Modal";
+
+// custom components
 import SignIn from "../../common/components/signIn/signIn";
 import ReviewForm from "./components/reviewForm/reviewForm";
+import Review from "../../common/components/review/review";
+
+const mockReviewData = {
+  reviewer: "Joe",
+  location: "santa barbara"
+};
 
 const styles = theme => ({
   layout: {
@@ -311,6 +321,7 @@ class Home extends React.Component {
             Something here to give the footer a purpose!
           </Typography>
         </footer>
+        <Review data={mockReviewData} />
         {/* End footer */}
         <Modal
           onClose={this.toggleSignInModal}
