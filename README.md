@@ -24,6 +24,32 @@ npm start
 yarn start
 ```
 
+### Deploying the GraphQL Server
+
+```sh
+// install the graphql-cli
+yarn global add graphql-cli
+
+// navigate to the server directory
+cd server
+
+// deploy prisma service to a prisma hosted environment
+prisma deploy
+
+// start server
+node src/index.js
+```
+
+### Spin up GraphQL Playground to test/view schema
+
+```sh
+// navigate to the server directory in a separate terminal
+cd server
+
+// run script
+graphql playground
+```
+
 ### Prettier
 
 Prettier auto-formats your code so you don't have to worry about it.

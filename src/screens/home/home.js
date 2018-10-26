@@ -1,6 +1,5 @@
 import React from "react";
 import PropTypes from "prop-types";
-
 // material-ui components
 import { withStyles } from "@material-ui/core/styles";
 import CssBaseline from "@material-ui/core/CssBaseline";
@@ -20,17 +19,13 @@ import Markdown from "../../common/components/markdown/markdown";
 import post1 from "../../common/components/markdown/mock/blog-post.1.md";
 import post2 from "../../common/components/markdown/mock/blog-post.2.md";
 import post3 from "../../common/components/markdown/mock/blog-post.3.md";
-import Modal from "@material-ui/core/Modal";
-
 // custom components
-import SignIn from "../../common/components/signIn/signIn";
-import ReviewForm from "./components/reviewForm/reviewForm";
-import Review from "../../common/components/review/review";
-
-const mockReviewData = {
-  reviewer: "Joe",
-  location: "santa barbara"
-};
+import LoginModal from "../../common/components/forms/authentication/loginModal";
+import SignUpModal from "../../common/components/forms/authentication/signUpModal";
+import ReviewModal from "../../common/components/forms/review/reviewModal";
+// custom helpers
+import login from "../../common/data/apiRequest/graphQLRequest/authentication/login";
+import signUp from "../../common/data/apiRequest/graphQLRequest/authentication/signUp";
 
 const styles = theme => ({
   layout: {
@@ -142,23 +137,95 @@ const social = ["GitHub", "Twitter", "Facebook"];
 class Home extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { isShowingSignIn: false, isShowingWriteAReview: false };
+    this.state = {
+      // modal state
+      isLoginModalShowing: false,
+      isSignUpModalShowing: false,
+      isWriteAReviewModalShowing: false,
+      // authentication
+      authenticationErrors: null,
+      user: null
+    };
   }
 
-  toggleSignInModal = () => {
+  // @todo: rename this and other related components to login
+  handleLogin = (email, password) => {
+    /* "alice@graph.cool", "graphql" */
+    login(email, password).then(payload => {
+      if (payload.errors) {
+        this.setState(state => {
+          return {
+            ...state,
+            authenticationErrors: payload.errors,
+            user: null
+          };
+        });
+      } else {
+        this.setState(state => {
+          return {
+            ...state,
+            isLoginModalShowing: false,
+            authenticationErrors: payload.errors,
+            user: payload.login.user
+          };
+        });
+      }
+    });
+  };
+
+  handleSignUp = (name, email, password) => {
+    signUp(name, email, password).then(payload => {
+      if (payload.errors) {
+        this.setState(state => {
+          return {
+            ...state,
+            authenticationErrors: payload.errors,
+            user: null
+          };
+        });
+      } else {
+        this.setState(state => {
+          return {
+            ...state,
+            isSignUpModalShowing: false,
+            authenticationErrors: payload.errors,
+            user: payload.signup.user
+          };
+        });
+      }
+    });
+  };
+
+  toggleLoginModalOpenState = () => {
     this.setState(state => {
-      return { ...state, isShowingSignIn: !state.isShowingSignIn };
+      return {
+        ...state,
+        isLoginModalShowing: !state.isLoginModalShowing
+      };
+    });
+  };
+
+  toggleSignUpModalOpenState = () => {
+    this.setState(state => {
+      return {
+        ...state,
+        isSignUpModalShowing: !state.isSignUpModalShowing
+      };
     });
   };
 
   toggleWriteAReviewModal = () => {
     this.setState(state => {
-      return { ...state, isShowingWriteAReview: !state.isShowingWriteAReview };
+      return {
+        ...state,
+        isWriteAReviewModalShowing: !state.isWriteAReviewModalShowing
+      };
     });
   };
 
   render() {
     const { classes } = this.props;
+    const { user } = this.state;
 
     return (
       <React.Fragment>
@@ -178,15 +245,22 @@ class Home extends React.Component {
             >
               Poos Reviews
             </Typography>
-            <IconButton>
+            <IconButton style={{ marginRight: 10 }}>
               <SearchIcon />
             </IconButton>
             <Button
+              size="small"
+              onClick={this.toggleLoginModalOpenState}
+              style={{ marginRight: 10 }}
+            >
+              Log In
+            </Button>
+            <Button
               variant="outlined"
               size="small"
-              onClick={this.toggleSignInModal}
+              onClick={this.toggleSignUpModalOpenState}
             >
-              Sign In
+              Sign Up
             </Button>
           </Toolbar>
           <Toolbar variant="dense" className={classes.toolbarSecondary}>
@@ -208,7 +282,7 @@ class Home extends React.Component {
                       color="inherit"
                       gutterBottom
                     >
-                      Title of a longer featured blog post
+                      {user ? `Hi ${user.name}!` : "Not logged in."}
                     </Typography>
                     <Typography variant="h5" color="inherit" paragraph>
                       Multiple lines of text that form the lede, informing new
@@ -321,17 +395,21 @@ class Home extends React.Component {
             Something here to give the footer a purpose!
           </Typography>
         </footer>
-        <Review data={mockReviewData} />
-        {/* End footer */}
-        <Modal
-          onClose={this.toggleSignInModal}
-          open={this.state.isShowingSignIn}
-        >
-          <SignIn />
-        </Modal>
-        <ReviewForm
+
+        {/* Modals */}
+        <LoginModal
+          isOpen={this.state.isLoginModalShowing}
+          onClose={this.toggleLoginModalOpenState}
+          onSubmit={this.handleLogin}
+        />
+        <SignUpModal
+          isOpen={this.state.isSignUpModalShowing}
+          onClose={this.toggleSignUpModalOpenState}
+          onSubmit={this.handleSignUp}
+        />
+        <ReviewModal
           onClose={this.toggleWriteAReviewModal}
-          isOpen={this.state.isShowingWriteAReview}
+          isOpen={this.state.isWriteAReviewModalShowing}
         />
       </React.Fragment>
     );

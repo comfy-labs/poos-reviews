@@ -1,5 +1,5 @@
 # source: https://us1.prisma.sh/michael-stromberg-2f6e83/database/dev
-# timestamp: Sun Oct 21 2018 21:14:43 GMT-0700 (Pacific Daylight Time)
+# timestamp: Thu Oct 25 2018 21:38:55 GMT-0700 (Pacific Daylight Time)
 
 type AggregateLink {
   count: Int!
@@ -141,6 +141,11 @@ input LinkUpdateInput {
   url: String
   postedBy: UserUpdateOneWithoutLinksInput
   votes: VoteUpdateManyWithoutLinkInput
+}
+
+input LinkUpdateManyInput {
+  description: String
+  url: String
 }
 
 input LinkUpdateManyWithoutPostedByInput {
@@ -367,9 +372,8 @@ type Mutation {
   upsertLink(where: LinkWhereUniqueInput!, create: LinkCreateInput!, update: LinkUpdateInput!): Link!
   upsertUser(where: UserWhereUniqueInput!, create: UserCreateInput!, update: UserUpdateInput!): User!
   upsertVote(where: VoteWhereUniqueInput!, create: VoteCreateInput!, update: VoteUpdateInput!): Vote!
-  updateManyLinks(data: LinkUpdateInput!, where: LinkWhereInput): BatchPayload!
-  updateManyUsers(data: UserUpdateInput!, where: UserWhereInput): BatchPayload!
-  updateManyVotes(data: VoteUpdateInput!, where: VoteWhereInput): BatchPayload!
+  updateManyLinks(data: LinkUpdateManyInput!, where: LinkWhereInput): BatchPayload!
+  updateManyUsers(data: UserUpdateManyInput!, where: UserWhereInput): BatchPayload!
   deleteManyLinks(where: LinkWhereInput): BatchPayload!
   deleteManyUsers(where: UserWhereInput): BatchPayload!
   deleteManyVotes(where: VoteWhereInput): BatchPayload!
@@ -553,6 +557,12 @@ input UserUpdateInput {
   password: String
   links: LinkUpdateManyWithoutPostedByInput
   votes: VoteUpdateManyWithoutUserInput
+}
+
+input UserUpdateManyInput {
+  name: String
+  email: String
+  password: String
 }
 
 input UserUpdateOneRequiredWithoutVotesInput {

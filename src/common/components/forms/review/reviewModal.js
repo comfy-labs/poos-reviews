@@ -14,9 +14,9 @@ import withStyles from "@material-ui/core/styles/withStyles";
 import Wizard, {
   WizardPage
 } from "../../../../common/components/wizard/wizard";
-import ReviewMetricsPage from "./reviewMetricsPage";
-import ReviewUploadImagesPage from "./reviewUploadImagesPage";
-import ReviewConfirmationPage from "./reviewConfirmationPage";
+import ReviewMetricsPage from "./pages/reviewMetricsPage";
+import ReviewUploadImagesPage from "./pages/reviewUploadImagesPage";
+import ReviewConfirmationPage from "./pages/reviewConfirmationPage";
 
 const styles = theme => ({
   layout: {
@@ -58,7 +58,7 @@ const styles = theme => ({
 
 const pages = ["Details", "Upload Images", "Confirmation"];
 
-class ReviewForm extends React.Component {
+class WriteAReviewModal extends React.Component {
   static propTypes = {
     classes: PropTypes.object.isRequired,
     isOpen: PropTypes.bool.isRequired,
@@ -70,8 +70,6 @@ class ReviewForm extends React.Component {
     return (
       <Dialog
         aria-labelledby="responsive-dialog-title"
-        className={classes.paper}
-        fullScreen
         onClose={this.props.onClose}
         open={this.props.isOpen}
       >
@@ -136,4 +134,4 @@ class ReviewForm extends React.Component {
   }
 }
 
-export default withStyles(styles)(ReviewForm);
+export default withStyles(styles)(WriteAReviewModal);
