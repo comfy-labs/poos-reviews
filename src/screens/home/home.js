@@ -2,10 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 // material-ui components
 import { withStyles } from "@material-ui/core/styles";
-import CssBaseline from "@material-ui/core/CssBaseline";
 import Toolbar from "@material-ui/core/Toolbar";
-import IconButton from "@material-ui/core/IconButton";
-import SearchIcon from "@material-ui/icons/Search";
 import Paper from "@material-ui/core/Paper";
 import Typography from "@material-ui/core/Typography";
 import Grid from "@material-ui/core/Grid";
@@ -23,6 +20,7 @@ import post3 from "../../common/components/markdown/mock/blog-post.3.md";
 import LoginModal from "../../common/components/forms/authentication/loginModal";
 import SignUpModal from "../../common/components/forms/authentication/signUpModal";
 import ReviewModal from "../../common/components/forms/review/reviewModal";
+import GoogleMap from "../../common/components/googleMap/googleMap";
 // custom helpers
 import login from "../../common/data/apiRequest/graphQLRequest/authentication/login";
 import signUp from "../../common/data/apiRequest/graphQLRequest/authentication/signUp";
@@ -144,13 +142,22 @@ class Home extends React.Component {
       isWriteAReviewModalShowing: false,
       // authentication
       authenticationErrors: null,
-      user: null
+      user: null,
+      // @todo: remove this when google is served from server
+      google: null
     };
   }
 
-  // @todo: rename this and other related components to login
+  componentDidMount() {
+    setTimeout(() => {
+      this.setState(state => {
+        const google = window.google;
+        return { ...state, google };
+      });
+    }, 2000);
+  }
+
   handleLogin = (email, password) => {
-    /* "alice@graph.cool", "graphql" */
     login(email, password).then(payload => {
       if (payload.errors) {
         this.setState(state => {
@@ -229,7 +236,6 @@ class Home extends React.Component {
 
     return (
       <React.Fragment>
-        <CssBaseline />
         <div className={classes.layout}>
           <Toolbar className={classes.toolbarMain}>
             <Button onClick={this.toggleWriteAReviewModal} size="small">
@@ -245,9 +251,6 @@ class Home extends React.Component {
             >
               Poos Reviews
             </Typography>
-            <IconButton style={{ marginRight: 10 }}>
-              <SearchIcon />
-            </IconButton>
             <Button
               size="small"
               onClick={this.toggleLoginModalOpenState}
@@ -294,6 +297,9 @@ class Home extends React.Component {
               </Grid>
             </Paper>
             {/* End main featured post */}
+            <GoogleMap google={this.state.google} />
+            {/*<GPSButton onClick={this.handleGPSClick} />*/}
+            {/*<Button onClick={this.handleGPSClick}>GPS</Button>*/}
             {/* Sub featured posts */}
             <Grid container spacing={40} className={classes.cardGrid}>
               {featuredPosts.map(post => (
