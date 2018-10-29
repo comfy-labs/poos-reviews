@@ -738,6 +738,10 @@
   version "1.4.0"
   resolved "https://registry.yarnpkg.com/@csstools/convert-colors/-/convert-colors-1.4.0.tgz#ad495dc41b12e75d588c6db8b9834f08fa131eb7"
 
+"@google/markerclusterer@^1.0.3":
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/@google/markerclusterer/-/markerclusterer-1.0.3.tgz#830b9dbba85fae9537a16d17947b484f9e860c65"
+
 "@material-ui/core@^3.2.2":
   version "3.2.2"
   resolved "https://registry.yarnpkg.com/@material-ui/core/-/core-3.2.2.tgz#5c622eeda8851a37a46d27583f0d6624e8ec4732"

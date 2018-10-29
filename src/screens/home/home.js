@@ -25,6 +25,70 @@ import GoogleMap from "../../common/components/googleMap/googleMap";
 import login from "../../common/data/apiRequest/graphQLRequest/authentication/login";
 import signUp from "../../common/data/apiRequest/graphQLRequest/authentication/signUp";
 
+// @todo: remove
+const data = [
+  {
+    location: {
+      lat: 37.797667,
+      lng: -122.429518
+    }
+  },
+  {
+    location: {
+      lat: 37.7866,
+      lng: -122.414149
+    }
+  },
+  {
+    location: {
+      lat: 37.790941,
+      lng: -122.450097
+    }
+  },
+  {
+    location: {
+      lat: 37.805465,
+      lng: -122.440243
+    }
+  },
+  {
+    location: {
+      lat: 37.797056,
+      lng: -122.400779
+    }
+  },
+  {
+    location: {
+      lat: 37.780098,
+      lng: -122.393572
+    }
+  },
+  {
+    location: {
+      lat: 37.784033,
+      lng: -122.420339
+    }
+  },
+  {
+    location: {
+      lat: 37.774671,
+      lng: -122.459633
+    }
+  },
+  {
+    location: {
+      lat: 37.785389,
+      lng: -122.434753
+    }
+  },
+  {
+    location: {
+      lat: 37.803295,
+      lng: -122.426688
+    }
+  }
+];
+
 const styles = theme => ({
   layout: {
     width: "auto",
@@ -297,7 +361,7 @@ class Home extends React.Component {
               </Grid>
             </Paper>
             {/* End main featured post */}
-            <GoogleMap google={this.state.google} />
+            <GoogleMap data={data} google={this.state.google} />
             {/*<GPSButton onClick={this.handleGPSClick} />*/}
             {/*<Button onClick={this.handleGPSClick}>GPS</Button>*/}
             {/* Sub featured posts */}

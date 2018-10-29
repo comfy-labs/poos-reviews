@@ -24,5 +24,10 @@ const port = 5000;
 //     });
 // });
 
+app.get("/images/toiletCluster/:imageName", (req, res) => {
+  const imageName = req.params.imageName;
+  res.sendFile(`images/toiletCluster/${imageName}`, { root: __dirname });
+});
+
 // start server
 app.listen(port, () => console.log(`Example app listening on port ${port}!`));

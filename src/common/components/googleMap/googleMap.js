@@ -2,14 +2,18 @@ import React from "react";
 import PropTypes from "prop-types";
 import ReactDOM from "react-dom";
 import get from "lodash/get";
+import MarkerClusterer from "@google/markerclusterer/src/markerclusterer";
 
+// material-ui
 import LinearProgress from "@material-ui/core/LinearProgress";
 import Paper from "@material-ui/core/Paper";
 import { withStyles } from "@material-ui/core/styles";
 
 // custom
 import getLocation from "../../data/deviceRequest/location/getLocation";
-import img from "../../../blue-dot.png"; // @todo: make sure this works in production mode
+// @todo: make sure these work in production mode
+import blueDot from "../../../blue-dot.png";
+import toilet from "../../../toilet25.png";
 
 const styles = theme => ({
   linearProgress: {
@@ -26,6 +30,14 @@ const styles = theme => ({
 class GoogleMap extends React.Component {
   static propTypes = {
     classes: PropTypes.object.isRequired,
+    data: PropTypes.arrayOf(
+      PropTypes.shape({
+        location: PropTypes.shape({
+          lat: PropTypes.number.isRequired,
+          lng: PropTypes.number.isRequired
+        }).isRequired
+      })
+    ).isRequired,
     google: PropTypes.object
   };
 
@@ -57,24 +69,28 @@ class GoogleMap extends React.Component {
       });
     }
 
-    if (
-      this.map &&
-      this.hasCurrentLocationChanged(
-        prevState.currentLocation,
-        this.state.currentLocation
-      )
-    ) {
-      const { Marker } = this.props.google.maps;
-      const marker = new Marker({
-        icon: img,
-        position: this.state.currentLocation,
-        title: "Current Location"
-      });
+    // update current location marker
+    if (this.map && prevState.currentLocation !== this.state.currentLocation) {
+      this.buildCurrentLocationMarker();
+    }
 
-      marker.setMap(this.map);
-      this.map.panTo(this.state.currentLocation);
+    // update data markers
+    if (this.map) {
+      this.buildMarkers();
     }
   }
+
+  buildCurrentLocationMarker = () => {
+    const { Marker } = this.props.google.maps;
+    const marker = new Marker({
+      icon: blueDot,
+      position: this.state.currentLocation,
+      title: "Current Location"
+    });
+
+    marker.setMap(this.map);
+    this.map.panTo(this.state.currentLocation);
+  };
 
   buildMap = () => {
     const {
@@ -89,6 +105,19 @@ class GoogleMap extends React.Component {
 
     // build GPS button
     this.map.controls[RIGHT_BOTTOM].push(this.buildGPSButton());
+  };
+
+  buildMarkers = () => {
+    const { Marker } = this.props.google.maps;
+    const markers = this.props.data.map((review, i) => {
+      return new Marker({ icon: toilet, position: review.location });
+    });
+
+    /* eslint-disable no-unused-vars */
+    const markerCluster = new MarkerClusterer(this.map, markers, {
+      imagePath: "http://127.0.0.1:5000/images/toiletCluster/toiletCluster"
+    });
+    /* eslint-enable no-unused-vars */
   };
 
   buildGPSButton = () => {

@@ -24,14 +24,27 @@ npm start
 yarn start
 ```
 
-### Deploying the GraphQL Server
+### Starting Express Server
+
+```sh
+// Note: This currently only serves the toilet cluster images (hahah), but will
+// eventually serve up our compiled js bundle in production mode
+
+// navigate to the server directory
+cd server
+
+// start server
+node app.js
+```
+
+### Deploying the GraphQL Service
 
 ```sh
 // install the graphql-cli
 yarn global add graphql-cli
 
 // navigate to the server directory
-cd server
+cd graphqlService
 
 // deploy prisma service to a prisma hosted environment
 prisma deploy
