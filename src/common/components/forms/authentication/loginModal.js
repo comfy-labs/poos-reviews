@@ -54,7 +54,7 @@ class LoginModal extends React.Component {
     });
   };
 
-  handlePassworChange = event => {
+  handlePasswordChange = event => {
     // must reference target outside because setState is asynchronous
     const password = event.target.value;
     this.setState(state => {
@@ -100,7 +100,7 @@ class LoginModal extends React.Component {
                   type="password"
                   id="password"
                   autoComplete="current-password"
-                  onChange={this.handlePassworChange}
+                  onChange={this.handlePasswordChange}
                 />
               </FormControl>
               <FormControlLabel
