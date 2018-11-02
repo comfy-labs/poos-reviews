@@ -3,10 +3,14 @@ import PropTypes from "prop-types";
 import ReactDOM from "react-dom";
 import get from "lodash/get";
 import MarkerClusterer from "@google/markerclusterer/src/markerclusterer";
+import Script from "react-load-script"
 
 // material-ui
 import LinearProgress from "@material-ui/core/LinearProgress";
 import Paper from "@material-ui/core/Paper";
+import SearchBar from 'material-ui-search-bar'
+
+
 import { withStyles } from "@material-ui/core/styles";
 
 // custom
@@ -41,19 +45,30 @@ class GoogleMap extends React.Component {
     google: PropTypes.object
   };
 
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.map = null;
     this.state = {
       currentLocation: { lat: 37.774929, lng: -122.419418 },
       currentLocationErrors: null,
       isLoading: true
     };
+
+    this.handleScriptLoad = this.handleScriptLoad.bind(this);
+    this.handlePlaceSelect = this.handlePlaceSelect.bind(this);
+    this.handleFocusChange = this.handleFocusChange.bind(this);
   }
 
   componentDidMount() {
+      console.log('MOUNT!');
     if (!this.map && this.props.google) {
       this.buildMap();
+
+
+
+
+
+
       this.setState(state => {
         return { ...state, isLoading: false };
       });
@@ -105,6 +120,8 @@ class GoogleMap extends React.Component {
 
     // build GPS button
     this.map.controls[RIGHT_BOTTOM].push(this.buildGPSButton());
+    console.log('MAP BUILT!');
+    this.setMapToCurrentLocation();
   };
 
   buildMarkers = () => {
@@ -166,12 +183,33 @@ class GoogleMap extends React.Component {
     };
   };
 
+  setMapToCurrentLocation = () => {
+      let autocomplete = this.autocomplete;
+      let map = this.map;
+      if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(function(position) {
+              var geolocation = {
+                  lat: position.coords.latitude,
+                  lng: position.coords.longitude
+              };
+              var circle = new google.maps.Circle({
+                  center: geolocation,
+                  radius: position.coords.accuracy
+              });
+              autocomplete.setBounds(circle.getBounds());
+              map.panTo({lat: position.coords.latitude, lng: position.coords.longitude});
+          });
+      }
+  };
+
   hasCurrentLocationChanged(oldLocation, newLocation) {
     return (
       get(oldLocation, "lat") !== get(newLocation, "lat") ||
       get(oldLocation, "lng") !== get(newLocation, "lng")
     );
   }
+
+
 
   handleGPSClick = () => {
     this.setState(state => {
@@ -193,24 +231,66 @@ class GoogleMap extends React.Component {
       });
   };
 
+  handleInputChange = event => {
+      this.setState({ inputValue: event.target.value });
+      console.log('wahhhhh');
+  };
+
+  handleFocusChange = event => {
+      console.log('focusssss');
+  };
+
+    handleScriptLoad() {
+      var options = {types: ['geocode']};
+      /*global google*/
+      this.autocomplete = new google.maps.places.Autocomplete(
+          document.getElementById('autocomplete'),
+          options);
+        this.autocomplete.addListener('place_changed',this.handlePlaceSelect);
+      console.log('SCRIPT LOADED!');
+    }
+
+    handlePlaceSelect() {
+        console.log('HANNLE');
+        let addressObject = this.autocomplete.getPlace();
+        let lat = addressObject.geometry.location.lat();
+        let lng = addressObject.geometry.location.lng();
+    }
+
+
   render() {
     return (
-      <Paper className={this.props.classes.paper}>
-        <div
-          style={{
-            position: "absolute",
-            top: 0,
-            width: "100%",
-            zIndex: this.state.isLoading ? 1 : 0
-          }}
-        >
-          <LinearProgress />
-        </div>
-        <div
-          ref="map"
-          style={{ height: 400, position: "absolute", top: 0, width: "100%" }}
-        />
-      </Paper>
+
+        <React.Fragment>
+          <div>
+            <Script
+                url="https://maps.googleapis.com/maps/api/js?key=AIzaSyBGc7C0LtRisG8VxJQonWDh-sL5GIoXYJU&libraries=places"
+                onLoad={this.handleScriptLoad}
+            />
+            <SearchBar
+                id="autocomplete"
+                value={this.state.value}
+                onFocus={this.handleFocusChange}
+                onChange={(newValue) => this.setState({ value: newValue })}
+            />
+          </div>
+          <Paper className={this.props.classes.paper}>
+            <div
+              style={{
+                position: "absolute",
+                top: 0,
+                width: "100%",
+                zIndex: this.state.isLoading ? 1 : 0
+              }}
+            >
+              <LinearProgress />
+            </div>
+            <div
+              ref="map"
+              style={{ height: 400, position: "absolute", top: 0, width: "100%" }}
+            />
+          </Paper>
+        </React.Fragment>
     );
   }
 }
