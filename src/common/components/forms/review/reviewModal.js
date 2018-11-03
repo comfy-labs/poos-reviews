@@ -9,6 +9,7 @@ import DialogTitle from "@material-ui/core/DialogTitle";
 import Step from "@material-ui/core/Step";
 import StepLabel from "@material-ui/core/StepLabel";
 import Stepper from "@material-ui/core/Stepper";
+import withMobileDialog from "@material-ui/core/withMobileDialog";
 import withStyles from "@material-ui/core/styles/withStyles";
 
 import Wizard, {
@@ -56,7 +57,7 @@ const styles = theme => ({
   }
 });
 
-const pages = ["Details", "Upload Images", "Confirmation"];
+const pages = ["Describe", "Upload", "Confirm"];
 
 class WriteAReviewModal extends React.Component {
   static propTypes = {
@@ -86,6 +87,8 @@ class WriteAReviewModal extends React.Component {
                   <Stepper
                     activeStep={currentPageIndex}
                     className={classes.stepper}
+                    alternativeLabel
+                    orientation="horizontal"
                   >
                     {pages.map(label => (
                       <Step key={label}>
@@ -134,4 +137,5 @@ class WriteAReviewModal extends React.Component {
   }
 }
 
-export default withStyles(styles)(WriteAReviewModal);
+const WriteAReviewModalWithStyles = withStyles(styles)(WriteAReviewModal);
+export default withMobileDialog()(WriteAReviewModalWithStyles);

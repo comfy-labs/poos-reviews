@@ -22,4 +22,5 @@ yarn-error.log*
 
 # servers / services
 /server/node_modules
+/server/build
 /graphqlService/node_modules
