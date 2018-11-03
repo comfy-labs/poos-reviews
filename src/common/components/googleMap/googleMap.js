@@ -4,15 +4,13 @@ import ReactDOM from "react-dom";
 import get from "lodash/get";
 import MarkerClusterer from "@google/markerclusterer/src/markerclusterer";
 import Script from "react-load-script"
-
 // material-ui
 import LinearProgress from "@material-ui/core/LinearProgress";
 import Paper from "@material-ui/core/Paper";
 import SearchBar from 'material-ui-search-bar'
 
 
-import { withStyles } from "@material-ui/core/styles";
-
+import {withStyles} from "@material-ui/core/styles";
 // custom
 import getLocation from "../../data/deviceRequest/location/getLocation";
 // @todo: make sure these work in production mode
@@ -60,14 +58,7 @@ class GoogleMap extends React.Component {
   }
 
   componentDidMount() {
-      console.log('MOUNT!');
     if (!this.map && this.props.google) {
-      this.buildMap();
-
-
-
-
-
 
       this.setState(state => {
         return { ...state, isLoading: false };
@@ -79,19 +70,6 @@ class GoogleMap extends React.Component {
     // create Google Maps instance if google object is available
     if (!this.map && this.props.google) {
       this.buildMap();
-      this.setState(state => {
-        return { ...state, isLoading: false };
-      });
-    }
-
-    // update current location marker
-    if (this.map && prevState.currentLocation !== this.state.currentLocation) {
-      this.buildCurrentLocationMarker();
-    }
-
-    // update data markers
-    if (this.map) {
-      this.buildMarkers();
     }
   }
 
@@ -113,15 +91,41 @@ class GoogleMap extends React.Component {
       ControlPosition: { RIGHT_BOTTOM }
     } = this.props.google.maps;
 
-    // build Google Map instance
+    // Grab the DOM element to put the map in
     const node = ReactDOM.findDOMNode(this.refs.map);
-    const mapConfig = this.buildMapConfig();
-    this.map = new Map(node, mapConfig);
-
-    // build GPS button
-    this.map.controls[RIGHT_BOTTOM].push(this.buildGPSButton());
-    console.log('MAP BUILT!');
-    this.setMapToCurrentLocation();
+    // Get the user's current location, which is an asynchronous request
+    const currentLocationPromise = new Promise((resolve, reject) => {
+        if (navigator.geolocation) {
+            console.log('\tResolving current location promise...');
+            navigator.geolocation.getCurrentPosition(function(position) {
+                resolve({
+                    lat: position.coords.latitude,
+                    lng: position.coords.longitude,
+                    accuracy: position.coords.accuracy
+                });
+            });
+        }
+    });
+    // Once the promise resolves, store the user's location and center the map
+    let component = this;
+    currentLocationPromise.then((resolvedValue) => {
+        console.log('Current location promise succeeded');
+        component.state.currentLocation = resolvedValue;
+        const mapConfig = component.buildMapConfig();
+        component.map = new Map(node, mapConfig);
+        component.map.controls[RIGHT_BOTTOM].push(component.buildGPSButton());
+        var circle = new google.maps.Circle({
+            center: resolvedValue,
+            radius: resolvedValue.accuracy
+        });
+        component.autocomplete.setBounds(circle.getBounds());
+        component.setState(state => {
+          return { ...state, isLoading: false };
+        });
+    }, (error) => {
+        console.log('Current Location promise failed!');
+        console.log(error);
+    });
   };
 
   buildMarkers = () => {
@@ -183,33 +187,12 @@ class GoogleMap extends React.Component {
     };
   };
 
-  setMapToCurrentLocation = () => {
-      let autocomplete = this.autocomplete;
-      let map = this.map;
-      if (navigator.geolocation) {
-          navigator.geolocation.getCurrentPosition(function(position) {
-              var geolocation = {
-                  lat: position.coords.latitude,
-                  lng: position.coords.longitude
-              };
-              var circle = new google.maps.Circle({
-                  center: geolocation,
-                  radius: position.coords.accuracy
-              });
-              autocomplete.setBounds(circle.getBounds());
-              map.panTo({lat: position.coords.latitude, lng: position.coords.longitude});
-          });
-      }
-  };
-
   hasCurrentLocationChanged(oldLocation, newLocation) {
     return (
       get(oldLocation, "lat") !== get(newLocation, "lat") ||
       get(oldLocation, "lng") !== get(newLocation, "lng")
     );
   }
-
-
 
   handleGPSClick = () => {
     this.setState(state => {
@@ -233,28 +216,30 @@ class GoogleMap extends React.Component {
 
   handleInputChange = event => {
       this.setState({ inputValue: event.target.value });
-      console.log('wahhhhh');
   };
 
-  handleFocusChange = event => {
-      console.log('focusssss');
-  };
+  handleFocusChange = event => {};
 
     handleScriptLoad() {
-      var options = {types: ['geocode']};
+      var options = {types: ['establishment']};
       /*global google*/
       this.autocomplete = new google.maps.places.Autocomplete(
           document.getElementById('autocomplete'),
           options);
         this.autocomplete.addListener('place_changed',this.handlePlaceSelect);
-      console.log('SCRIPT LOADED!');
     }
 
     handlePlaceSelect() {
-        console.log('HANNLE');
         let addressObject = this.autocomplete.getPlace();
         let lat = addressObject.geometry.location.lat();
         let lng = addressObject.geometry.location.lng();
+        let geolocation = {lat: lat, lng: lng};
+        var marker = new google.maps.Marker({
+            position: geolocation,
+            map: this.map,
+            title: 'Poop'
+        });
+
     }
 
 
@@ -269,7 +254,7 @@ class GoogleMap extends React.Component {
             />
             <SearchBar
                 id="autocomplete"
-                value={this.state.value}
+                value={this.state.query}
                 onFocus={this.handleFocusChange}
                 onChange={(newValue) => this.setState({ value: newValue })}
             />
