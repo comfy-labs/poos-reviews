@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 
 // material-ui
 import Button from "@material-ui/core/Button";
+import DialogActions from "@material-ui/core/DialogActions";
 import Divider from "@material-ui/core/Divider";
 import List from "@material-ui/core/List";
 import Typography from "@material-ui/core/Typography";
@@ -14,10 +15,15 @@ import UploadedImageListItem from "../uploadedImageListItem";
 const styles = theme => {
   return {
     button: {
-      margin: theme.spacing.unit
+      marginTop: theme.spacing.unit * 3,
+      marginLeft: theme.spacing.unit
+    },
+    buttons: {
+      display: "flex",
+      justifyContent: "flex-end"
     },
     container: {
-      minWidth: 320
+      width: "100%"
     },
     leftIcon: {
       marginRight: theme.spacing.unit
@@ -40,6 +46,9 @@ const styles = theme => {
 
 class ReviewUploadImagesPage extends React.Component {
   static propTypes = {
+    goBack: PropTypes.func.isRequired,
+    goForward: PropTypes.func.isRequired,
+    onSavePageState: PropTypes.func.isRequired,
     classes: PropTypes.object.isRequired
   };
 
@@ -47,6 +56,16 @@ class ReviewUploadImagesPage extends React.Component {
     super();
     this.state = { imageFiles: [] };
   }
+
+  handleBackClick = () => {
+    this.props.onSavePageState(this.state);
+    this.props.goBack();
+  };
+
+  handleNextClick = () => {
+    this.props.onSavePageState(this.state);
+    this.props.goForward();
+  };
 
   handleSubmitImageClick = event => {
     const imageFile = event.target.files[0];
@@ -73,9 +92,10 @@ class ReviewUploadImagesPage extends React.Component {
 
   render() {
     const { imageFiles } = this.state;
+    const { classes } = this.props;
     const isSubmitButtonDisabled = imageFiles.length > 4;
     return (
-      <div className={this.props.classes.container}>
+      <div className={classes.container}>
         <Typography variant="h6" gutterBottom>
           Upload Images
         </Typography>
@@ -102,7 +122,7 @@ class ReviewUploadImagesPage extends React.Component {
         <List>
           {imageFiles.map((imageFile, index) => {
             return (
-              <div key={index}>
+              <div key={index} style={{ width: "100%" }}>
                 <UploadedImageListItem
                   imageFile={imageFile}
                   onDeleteClick={this.makeHandleOnDeleteImageClick(index)}
@@ -112,6 +132,21 @@ class ReviewUploadImagesPage extends React.Component {
             );
           })}
         </List>
+        {/* buttons */}
+        <DialogActions className={classes.buttons}>
+          <Button onClick={this.handleBackClick} className={classes.button}>
+            Back
+          </Button>
+          <Button
+            onClick={this.handleNextClick}
+            className={classes.button}
+            color="primary"
+            autoFocus
+            variant="contained"
+          >
+            Next
+          </Button>
+        </DialogActions>
       </div>
     );
   }

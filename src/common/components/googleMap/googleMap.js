@@ -3,14 +3,13 @@ import PropTypes from "prop-types";
 import ReactDOM from "react-dom";
 import get from "lodash/get";
 import MarkerClusterer from "@google/markerclusterer/src/markerclusterer";
-import Script from "react-load-script"
+import Script from "react-load-script";
 // material-ui
 import LinearProgress from "@material-ui/core/LinearProgress";
 import Paper from "@material-ui/core/Paper";
-import SearchBar from 'material-ui-search-bar'
+import SearchBar from "material-ui-search-bar";
 
-
-import {withStyles} from "@material-ui/core/styles";
+import { withStyles } from "@material-ui/core/styles";
 // custom
 import getLocation from "../../data/deviceRequest/location/getLocation";
 // @todo: make sure these work in production mode
@@ -59,7 +58,6 @@ class GoogleMap extends React.Component {
 
   componentDidMount() {
     if (!this.map && this.props.google) {
-
       this.setState(state => {
         return { ...state, isLoading: false };
       });
@@ -95,37 +93,40 @@ class GoogleMap extends React.Component {
     const node = ReactDOM.findDOMNode(this.refs.map);
     // Get the user's current location, which is an asynchronous request
     const currentLocationPromise = new Promise((resolve, reject) => {
-        if (navigator.geolocation) {
-            console.log('\tResolving current location promise...');
-            navigator.geolocation.getCurrentPosition(function(position) {
-                resolve({
-                    lat: position.coords.latitude,
-                    lng: position.coords.longitude,
-                    accuracy: position.coords.accuracy
-                });
-            });
-        }
+      if (navigator.geolocation) {
+        console.log("\tResolving current location promise...");
+        navigator.geolocation.getCurrentPosition(function(position) {
+          resolve({
+            lat: position.coords.latitude,
+            lng: position.coords.longitude,
+            accuracy: position.coords.accuracy
+          });
+        });
+      }
     });
     // Once the promise resolves, store the user's location and center the map
     let component = this;
-    currentLocationPromise.then((resolvedValue) => {
-        console.log('Current location promise succeeded');
+    currentLocationPromise.then(
+      resolvedValue => {
+        console.log("Current location promise succeeded");
         component.state.currentLocation = resolvedValue;
         const mapConfig = component.buildMapConfig();
         component.map = new Map(node, mapConfig);
         component.map.controls[RIGHT_BOTTOM].push(component.buildGPSButton());
         var circle = new google.maps.Circle({
-            center: resolvedValue,
-            radius: resolvedValue.accuracy
+          center: resolvedValue,
+          radius: resolvedValue.accuracy
         });
         component.autocomplete.setBounds(circle.getBounds());
         component.setState(state => {
           return { ...state, isLoading: false };
         });
-    }, (error) => {
-        console.log('Current Location promise failed!');
+      },
+      error => {
+        console.log("Current Location promise failed!");
         console.log(error);
-    });
+      }
+    );
   };
 
   buildMarkers = () => {
@@ -215,67 +216,65 @@ class GoogleMap extends React.Component {
   };
 
   handleInputChange = event => {
-      this.setState({ inputValue: event.target.value });
+    this.setState({ inputValue: event.target.value });
   };
 
   handleFocusChange = event => {};
 
-    handleScriptLoad() {
-      var options = {types: ['establishment']};
-      /*global google*/
-      this.autocomplete = new google.maps.places.Autocomplete(
-          document.getElementById('autocomplete'),
-          options);
-        this.autocomplete.addListener('place_changed',this.handlePlaceSelect);
-    }
+  handleScriptLoad() {
+    var options = { types: ["establishment"] };
+    /*global google*/
+    this.autocomplete = new google.maps.places.Autocomplete(
+      document.getElementById("autocomplete"),
+      options
+    );
+    this.autocomplete.addListener("place_changed", this.handlePlaceSelect);
+  }
 
-    handlePlaceSelect() {
-        let addressObject = this.autocomplete.getPlace();
-        let lat = addressObject.geometry.location.lat();
-        let lng = addressObject.geometry.location.lng();
-        let geolocation = {lat: lat, lng: lng};
-        var marker = new google.maps.Marker({
-            position: geolocation,
-            map: this.map,
-            title: 'Poop'
-        });
-
-    }
-
+  handlePlaceSelect() {
+    let addressObject = this.autocomplete.getPlace();
+    let lat = addressObject.geometry.location.lat();
+    let lng = addressObject.geometry.location.lng();
+    let geolocation = { lat: lat, lng: lng };
+    var marker = new google.maps.Marker({
+      position: geolocation,
+      map: this.map,
+      title: "Poop"
+    });
+  }
 
   render() {
     return (
-
-        <React.Fragment>
-          <div>
-            <Script
-                url="https://maps.googleapis.com/maps/api/js?key=AIzaSyBGc7C0LtRisG8VxJQonWDh-sL5GIoXYJU&libraries=places"
-                onLoad={this.handleScriptLoad}
-            />
-            <SearchBar
-                id="autocomplete"
-                value={this.state.query}
-                onFocus={this.handleFocusChange}
-                onChange={(newValue) => this.setState({ value: newValue })}
-            />
+      <React.Fragment>
+        <div>
+          <Script
+            url="https://maps.googleapis.com/maps/api/js?key=AIzaSyBGc7C0LtRisG8VxJQonWDh-sL5GIoXYJU&libraries=places"
+            onLoad={this.handleScriptLoad}
+          />
+          <SearchBar
+            id="autocomplete"
+            value={this.state.query}
+            onFocus={this.handleFocusChange}
+            onChange={newValue => this.setState({ value: newValue })}
+          />
+        </div>
+        <Paper className={this.props.classes.paper}>
+          <div
+            style={{
+              position: "absolute",
+              top: 0,
+              width: "100%",
+              zIndex: this.state.isLoading ? 1 : 0
+            }}
+          >
+            <LinearProgress />
           </div>
-          <Paper className={this.props.classes.paper}>
-            <div
-              style={{
-                position: "absolute",
-                top: 0,
-                width: "100%",
-                zIndex: this.state.isLoading ? 1 : 0
-              }}
-            >
-              <LinearProgress />
-            </div>
-            <div
-              ref="map"
-              style={{ height: 400, position: "absolute", top: 0, width: "100%" }}
-            />
-          </Paper>
-        </React.Fragment>
+          <div
+            ref="map"
+            style={{ height: 400, position: "absolute", top: 0, width: "100%" }}
+          />
+        </Paper>
+      </React.Fragment>
     );
   }
 }

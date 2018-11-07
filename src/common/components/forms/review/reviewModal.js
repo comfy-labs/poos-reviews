@@ -1,9 +1,9 @@
 import React from "react";
 import PropTypes from "prop-types";
 
-import Button from "@material-ui/core/Button";
+// import Button from "@material-ui/core/Button";
 import Dialog from "@material-ui/core/Dialog";
-import DialogActions from "@material-ui/core/DialogActions";
+// import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import Step from "@material-ui/core/Step";
@@ -19,43 +19,29 @@ import ReviewMetricsPage from "./pages/reviewMetricsPage";
 import ReviewUploadImagesPage from "./pages/reviewUploadImagesPage";
 import ReviewConfirmationPage from "./pages/reviewConfirmationPage";
 
-const styles = theme => ({
-  layout: {
-    width: "auto",
-    marginLeft: theme.spacing.unit * 2,
-    marginRight: theme.spacing.unit * 2,
-    [theme.breakpoints.up(600 + theme.spacing.unit * 2 * 2)]: {
-      width: 600,
-      marginLeft: "auto",
-      marginRight: "auto"
+const styles = theme => {
+  return {
+    dialog: {
+      [theme.breakpoints.down("sm")]: {
+        width: window.innerWidth - theme.spacing.unit * 12
+      },
+      [theme.breakpoints.up("sm")]: {
+        width: 600 - theme.spacing.unit * 12
+      }
+    },
+    stepper: {
+      padding: `${theme.spacing.unit * 3}px 0 ${theme.spacing.unit * 5}px`
+    },
+    buttons: {
+      display: "flex",
+      justifyContent: "flex-end"
+    },
+    button: {
+      marginTop: theme.spacing.unit * 3,
+      marginLeft: theme.spacing.unit
     }
-  },
-  paper: {
-    backgroundColor: theme.palette.background.paper,
-    marginTop: theme.spacing.unit * 3,
-    marginBottom: theme.spacing.unit * 3,
-    padding: theme.spacing.unit * 2,
-    [theme.breakpoints.up(600 + theme.spacing.unit * 3 * 2)]: {
-      marginTop: theme.spacing.unit * 6,
-      marginBottom: theme.spacing.unit * 6,
-      marginLeft: "auto",
-      marginRight: "auto",
-      padding: 0,
-      width: 600
-    }
-  },
-  stepper: {
-    padding: `${theme.spacing.unit * 3}px 0 ${theme.spacing.unit * 5}px`
-  },
-  buttons: {
-    display: "flex",
-    justifyContent: "flex-end"
-  },
-  button: {
-    marginTop: theme.spacing.unit * 3,
-    marginLeft: theme.spacing.unit
-  }
-});
+  };
+};
 
 const pages = ["Describe", "Upload", "Confirm"];
 
@@ -66,72 +52,82 @@ class WriteAReviewModal extends React.Component {
     onClose: PropTypes.func.isRequired
   };
 
+  constructor() {
+    super();
+    this.state = {
+      metricsPage: null,
+      uploadImagesPage: null
+    };
+  }
+
+  getPageState = pageName => this.state[pageName];
+
+  setPageState = pageName => newPageState => {
+    this.setState(state => {
+      return { ...state, [pageName]: newPageState };
+    });
+  };
+
   render() {
     const { classes } = this.props;
+    const {
+      metricsPage: previousMetricsPageState,
+      uploadImagesPage: previousUploadImagesState
+    } = this.state;
     return (
       <Dialog
         aria-labelledby="responsive-dialog-title"
         onClose={this.props.onClose}
         open={this.props.isOpen}
       >
-        <DialogTitle id="responsive-dialog-title">
-          {"Write a Review"}
-        </DialogTitle>
-        <DialogContent>
-          <Wizard
-            pageCount={3}
-            render={({ currentPageIndex, goBack, goForward }) => {
-              return (
-                <React.Fragment>
-                  {/* stepper */}
-                  <Stepper
-                    activeStep={currentPageIndex}
-                    className={classes.stepper}
-                    alternativeLabel
-                    orientation="horizontal"
-                  >
-                    {pages.map(label => (
-                      <Step key={label}>
-                        <StepLabel>{label}</StepLabel>
-                      </Step>
-                    ))}
-                  </Stepper>
-
-                  {/* pages */}
-                  <WizardPage isHidden={currentPageIndex !== 0}>
-                    <ReviewMetricsPage />
-                  </WizardPage>
-                  <WizardPage isHidden={currentPageIndex !== 1}>
-                    <ReviewUploadImagesPage />
-                  </WizardPage>
-                  <WizardPage isHidden={currentPageIndex !== 2}>
-                    <ReviewConfirmationPage />
-                  </WizardPage>
-
-                  {/* buttons */}
-                  <DialogActions className={classes.buttons}>
-                    {currentPageIndex !== 0 && (
-                      <Button onClick={goBack} className={classes.button}>
-                        Back
-                      </Button>
-                    )}
-                    <Button
-                      onClick={goForward}
-                      className={classes.button}
-                      color="primary"
-                      autoFocus
-                      variant="contained"
+        <div className={classes.dialog}>
+          <DialogTitle id="responsive-dialog-title">Write A Review</DialogTitle>
+          <DialogContent>
+            <Wizard
+              pageCount={3}
+              render={({ currentPageIndex, goBack, goForward }) => {
+                return (
+                  <React.Fragment>
+                    {/* stepper */}
+                    <Stepper
+                      activeStep={currentPageIndex}
+                      className={classes.stepper}
+                      alternativeLabel
+                      orientation="horizontal"
                     >
-                      {currentPageIndex === pages.length - 1
-                        ? "Submit"
-                        : "Next"}
-                    </Button>
-                  </DialogActions>
-                </React.Fragment>
-              );
-            }}
-          />
-        </DialogContent>
+                      {pages.map(label => (
+                        <Step key={label}>
+                          <StepLabel>{label}</StepLabel>
+                        </Step>
+                      ))}
+                    </Stepper>
+
+                    {/* pages */}
+                    <WizardPage isHidden={currentPageIndex !== 0}>
+                      <ReviewMetricsPage
+                        onClose={this.props.onClose}
+                        goForward={goForward}
+                        onSavePageState={this.setPageState("metricsPage")}
+                        previousState={previousMetricsPageState}
+                      />
+                    </WizardPage>
+                    <WizardPage isHidden={currentPageIndex !== 1}>
+                      <ReviewUploadImagesPage
+                        goBack={goBack}
+                        goForward={goForward}
+                        onSavePageState={this.setPageState("uploadImagesPage")}
+                        previousState={previousUploadImagesState}
+                      />
+                    </WizardPage>
+                    <WizardPage isHidden={currentPageIndex !== 2}>
+                      <ReviewConfirmationPage />
+                    </WizardPage>
+                  </React.Fragment>
+                );
+              }}
+            />
+          </DialogContent>
+        </div>
       </Dialog>
     );
   }
