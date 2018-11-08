@@ -1,5 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
+import Script from "react-load-script";
 // material-ui components
 import { withStyles } from "@material-ui/core/styles";
 import Toolbar from "@material-ui/core/Toolbar";
@@ -212,15 +213,6 @@ class Home extends React.Component {
     };
   }
 
-  componentDidMount() {
-    setTimeout(() => {
-      this.setState(state => {
-        const google = window.google;
-        return { ...state, google };
-      });
-    }, 2000);
-  }
-
   handleLogin = (email, password) => {
     login(email, password).then(payload => {
       if (payload.errors) {
@@ -241,6 +233,13 @@ class Home extends React.Component {
           };
         });
       }
+    });
+  };
+
+  handleScriptLoad = () => {
+    this.setState(state => {
+      const google = window.google;
+      return { ...state, google };
     });
   };
 
@@ -300,6 +299,10 @@ class Home extends React.Component {
 
     return (
       <React.Fragment>
+        <Script
+          url="https://maps.googleapis.com/maps/api/js?key=AIzaSyBGc7C0LtRisG8VxJQonWDh-sL5GIoXYJU&libraries=places"
+          onLoad={this.handleScriptLoad}
+        />
         <div className={classes.layout}>
           <Toolbar className={classes.toolbarMain}>
             <Button onClick={this.toggleWriteAReviewModal} size="small">
@@ -362,9 +365,6 @@ class Home extends React.Component {
             </Paper>
             {/* End main featured post */}
             <GoogleMap data={data} google={this.state.google} />
-            {/*<GPSButton onClick={this.handleGPSClick} />*/}
-            {/*<Button onClick={this.handleGPSClick}>GPS</Button>*/}
-            {/* Sub featured posts */}
             <Grid container spacing={40} className={classes.cardGrid}>
               {featuredPosts.map(post => (
                 <Grid item key={post.title} xs={12} md={6}>
@@ -478,8 +478,9 @@ class Home extends React.Component {
           onSubmit={this.handleSignUp}
         />
         <ReviewModal
-          onClose={this.toggleWriteAReviewModal}
+          google={this.state.google}
           isOpen={this.state.isWriteAReviewModalShowing}
+          onClose={this.toggleWriteAReviewModal}
         />
       </React.Fragment>
     );

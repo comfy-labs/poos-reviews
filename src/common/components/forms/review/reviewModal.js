@@ -48,6 +48,7 @@ const pages = ["Describe", "Upload", "Confirm"];
 class WriteAReviewModal extends React.Component {
   static propTypes = {
     classes: PropTypes.object.isRequired,
+    google: PropTypes.object,
     isOpen: PropTypes.bool.isRequired,
     onClose: PropTypes.func.isRequired
   };
@@ -105,8 +106,9 @@ class WriteAReviewModal extends React.Component {
                     {/* pages */}
                     <WizardPage isHidden={currentPageIndex !== 0}>
                       <ReviewMetricsPage
-                        onClose={this.props.onClose}
                         goForward={goForward}
+                        google={this.props.google}
+                        onClose={this.props.onClose}
                         onSavePageState={this.setPageState("metricsPage")}
                         previousState={previousMetricsPageState}
                       />

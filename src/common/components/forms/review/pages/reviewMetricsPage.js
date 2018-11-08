@@ -1,12 +1,19 @@
 import React from "react";
-import Typography from "@material-ui/core/Typography";
 import PropTypes from "prop-types";
+import debounce from "lodash/debounce";
 
 import Button from "@material-ui/core/Button";
+import ClickAwayListener from "@material-ui/core/ClickAwayListener";
 import DialogActions from "@material-ui/core/DialogActions";
 import Grid from "@material-ui/core/Grid";
+import Grow from "@material-ui/core/Grow";
+import LinearProgress from "@material-ui/core/LinearProgress";
+import MenuList from "@material-ui/core/MenuList";
 import MenuItem from "@material-ui/core/MenuItem";
+import Paper from "@material-ui/core/Paper";
+import Popper from "@material-ui/core/Popper";
 import TextField from "@material-ui/core/TextField";
+import Typography from "@material-ui/core/Typography";
 import { withStyles } from "@material-ui/core/styles";
 
 import Rater from "../../../rater/rater";
@@ -20,6 +27,9 @@ const styles = theme => {
     buttons: {
       display: "flex",
       justifyContent: "flex-end"
+    },
+    popper: {
+      zIndex: 2
     }
   };
 };
@@ -54,6 +64,10 @@ const tpQualities = [
 class ReviewMetricsPage extends React.Component {
   static propTypes = {
     classes: PropTypes.object.isRequired,
+    defaultLocation: PropTypes.shape({
+      label: PropTypes.string.isRequired,
+      value: PropTypes.string.isRequired
+    }),
     onClose: PropTypes.func.isRequired,
     goForward: PropTypes.func.isRequired,
     onSavePageState: PropTypes.func.isRequired,
@@ -62,10 +76,16 @@ class ReviewMetricsPage extends React.Component {
 
   constructor(props) {
     super();
+
+    // debounce typeahead search queries to the Google Maps Places api
+    this.debouncedGetPlacePredictions = debounce(this.getPlacePredictions, 300);
+
     this.state = props.previousState || {
       accessibility: "",
       cleanliness: "",
-      geolocation: null,
+      isLocationDropdownOpen: false,
+      location: props.defaultLocation || { label: "", value: null },
+      locationOptions: [],
       numStalls: 0,
       privacy: "",
       rating: 0,
@@ -76,13 +96,69 @@ class ReviewMetricsPage extends React.Component {
 
   getField = name => this.state[name];
 
-  handleChange = name => event => {
+  getPlacePredictions = searchText => {
+    this.autocomplete.getPlacePredictions(
+      {
+        input: searchText,
+        types: ["establishment"]
+      },
+      (predictions, status) => {
+        this.setState(state => {
+          const locationOptions = predictions.map(prediction => {
+            return {
+              label: prediction.description,
+              value: prediction.place_id
+            };
+          });
+          return { ...state, locationOptions };
+        });
+      }
+    );
+  };
+
+  handleTextFieldChange = name => event => {
     this.setState({ [name]: event.target.value });
+  };
+
+  handleLocationChange = event => {
+    const searchText = event.target.value;
+    this.setState(state => {
+      return {
+        ...state,
+        isLocationDropdownOpen: true,
+        location: { label: searchText, value: null }
+      };
+    });
+
+    if (searchText !== "") {
+      if (this.autocomplete) {
+        this.debouncedGetPlacePredictions(searchText);
+      } else {
+        const { AutocompleteService } = this.props.google.maps.places;
+        this.autocomplete = new AutocompleteService();
+        this.debouncedGetPlacePredictions(searchText);
+      }
+    }
+  };
+
+  handleLocationSelect = location => {
+    this.setState(state => {
+      return { ...state, isLocationDropdownOpen: false, location };
+    });
   };
 
   handleRatingChange = rating => {
     this.setState(state => {
       return { ...state, rating };
+    });
+  };
+
+  handleToggleRatingDropdown = () => {
+    this.setState(state => {
+      return {
+        ...state,
+        isLocationDropdownOpen: !state.isLocationDropdownOpen
+      };
     });
   };
 
@@ -96,7 +172,7 @@ class ReviewMetricsPage extends React.Component {
   };
 
   render() {
-    const { classes } = this.props;
+    const { classes, google } = this.props;
 
     return (
       <React.Fragment>
@@ -104,18 +180,6 @@ class ReviewMetricsPage extends React.Component {
           Write a Review
         </Typography>
         <Grid container spacing={24}>
-          {/*<Grid item xs={12}>
-              <TextField
-                defaultValue={this.getField("geolocation")}
-                fullWidth
-                id="geolocation"
-                inputProps={{ onBlur: this.handleChange("geolocation") }}
-                label="Bathroom Location"
-                margin="normal"
-                name="geolocation"
-                required
-              />
-            </Grid>*/}
           <Grid item xs={12}>
             <Rater
               value={this.getField("rating")}
@@ -123,6 +187,67 @@ class ReviewMetricsPage extends React.Component {
               onChange={this.handleRatingChange}
             />
           </Grid>
+          <Grid item xs={12}>
+            <div ref="location" style={{ height: 73 }}>
+              {google ? null : <LinearProgress />}
+              <TextField
+                disabled={!google}
+                fullWidth
+                id="location"
+                InputLabelProps={{ shrink: true }}
+                label="Bathroom Location"
+                margin="normal"
+                onChange={this.handleLocationChange}
+                required
+                value={this.getField("location").label}
+                variant="outlined"
+              />
+            </div>
+            {this.state.isLocationDropdownOpen ? (
+              <Popper
+                className={classes.popper}
+                open={this.state.isLocationDropdownOpen}
+                anchorEl={this.refs.location}
+                transition
+                disablePortal
+              >
+                {({ TransitionProps, placement }) => (
+                  <Grow
+                    {...TransitionProps}
+                    id="menu-list-grow"
+                    style={{
+                      transformOrigin:
+                        placement === "bottom" ? "center top" : "center bottom"
+                    }}
+                  >
+                    <Paper style={{ width: this.refs.location.offsetWidth }}>
+                      <ClickAwayListener
+                        onClickAway={this.handleToggleRatingDropdown}
+                      >
+                        <MenuList>
+                          {this.state.locationOptions.map(option => (
+                            <MenuItem
+                              key={option.value}
+                              onClick={() => {
+                                this.handleLocationSelect(option);
+                              }}
+                              style={{ overflow: "ellipsis" }}
+                              value={option.value}
+                            >
+                              <Typography noWrap variant="inherit">
+                                {option.label}
+                              </Typography>
+                            </MenuItem>
+                          ))}
+                        </MenuList>
+                      </ClickAwayListener>
+                    </Paper>
+                  </Grow>
+                )}
+              </Popper>
+            ) : null}
+          </Grid>
+
           <Grid item xs={12} sm={6}>
             <TextField
               fullWidth
@@ -130,7 +255,7 @@ class ReviewMetricsPage extends React.Component {
               InputLabelProps={{ shrink: true }}
               label="Accessibility"
               margin="normal"
-              onChange={this.handleChange("accessibility")}
+              onChange={this.handleTextFieldChange("accessibility")}
               select
               value={this.getField("accessibility")}
               variant="outlined"
@@ -150,7 +275,7 @@ class ReviewMetricsPage extends React.Component {
               InputLabelProps={{ shrink: true }}
               label="Privacy"
               margin="normal"
-              onChange={this.handleChange("privacy")}
+              onChange={this.handleTextFieldChange("privacy")}
               select
               value={this.getField("privacy")}
               variant="outlined"
@@ -169,7 +294,7 @@ class ReviewMetricsPage extends React.Component {
               InputLabelProps={{ shrink: true }}
               label="Number of Stalls"
               margin="normal"
-              onChange={this.handleChange("numStalls")}
+              onChange={this.handleTextFieldChange("numStalls")}
               type="number"
               value={this.getField("numStalls")}
               variant="outlined"
@@ -182,7 +307,7 @@ class ReviewMetricsPage extends React.Component {
               InputLabelProps={{ shrink: true }}
               label="Cleanliness"
               margin="normal"
-              onChange={this.handleChange("cleanliness")}
+              onChange={this.handleTextFieldChange("cleanliness")}
               select
               value={this.getField("cleanliness")}
               variant="outlined"
@@ -201,7 +326,7 @@ class ReviewMetricsPage extends React.Component {
               InputLabelProps={{ shrink: true }}
               label="Toilet Paper Quality"
               margin="normal"
-              onChange={this.handleChange("tpQuality")}
+              onChange={this.handleTextFieldChange("tpQuality")}
               select
               value={this.getField("tpQuality")}
               variant="outlined"
@@ -221,7 +346,7 @@ class ReviewMetricsPage extends React.Component {
               margin="normal"
               multiline
               name="reviewText"
-              onChange={this.handleChange("reviewText")}
+              onChange={this.handleTextFieldChange("reviewText")}
               required
               rows="4"
               value={this.getField("reviewText")}
