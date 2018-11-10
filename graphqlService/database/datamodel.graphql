@@ -1,9 +1,17 @@
-type Link {
+type Review {
   id: ID! @unique
   createdAt: DateTime!
-  description: String!
-  url: String!
-  postedBy: User
+  accessibility: String!
+  cleanliness: Int!
+  locationLat: Float!
+  locationLng: Float!
+  locationPlaceId: Float!
+  numStalls: Int!
+  privacy: Int!
+  rating: Int!
+  reviewText: String!
+  tpQuality: Int!
+  postedBy: User!
   votes: [Vote!]!
 }
 
@@ -12,12 +20,12 @@ type User {
   name: String!
   email: String! @unique
   password: String!
-  links: [Link!]!
+  reviews: [Review!]!
   votes: [Vote!]!
 }
 
 type Vote {
   id: ID! @unique
-  link: Link!
+  review: Review!
   user: User!
 }

@@ -3,9 +3,8 @@ const jwt = require("jsonwebtoken");
 const { APP_SECRET, getUserId } = require("../utils");
 
 async function signup(parent, args, context, info) {
-  // 1
   const password = await bcrypt.hash(args.password, 10);
-  // 2
+
   const user = await context.db.mutation.createUser(
     {
       data: { ...args, password }
@@ -13,18 +12,12 @@ async function signup(parent, args, context, info) {
     `{ id }`
   );
 
-  // 3
   const token = jwt.sign({ userId: user.id }, APP_SECRET);
 
-  // 4
-  return {
-    token,
-    user
-  };
+  return { token, user };
 }
 
 async function login(parent, args, context, info) {
-  // 1
   const user = await context.db.query.user(
     { where: { email: args.email } },
     ` { id password } `
@@ -33,7 +26,6 @@ async function login(parent, args, context, info) {
     throw new Error("No such user found");
   }
 
-  // 2
   const valid = await bcrypt.compare(args.password, user.password);
   if (!valid) {
     throw new Error("Invalid password");
@@ -41,20 +33,24 @@ async function login(parent, args, context, info) {
 
   const token = jwt.sign({ userId: user.id }, APP_SECRET);
 
-  // 3
-  return {
-    token,
-    user
-  };
+  return { token, user };
 }
 
 function post(parent, args, context, info) {
   const userId = getUserId(context);
-  return context.db.mutation.createLink(
+  return context.db.mutation.createReview(
     {
       data: {
-        url: args.url,
-        description: args.description,
+        accessibility: args.accessibility,
+        cleanliness: args.cleanliness,
+        locationLat: args.locationLat,
+        locationLng: args.locationLng,
+        locationPlaceId: args.locationPlaceId,
+        numStalls: args.numStalls,
+        privacy: args.privacy,
+        rating: args.rating,
+        reviewText: args.reviewText,
+        tpQuality: args.tpQuality,
         postedBy: { connect: { id: userId } }
       }
     },
@@ -63,24 +59,21 @@ function post(parent, args, context, info) {
 }
 
 async function vote(parent, args, context, info) {
-  // 1
   const userId = getUserId(context);
 
-  // 2
-  const linkExists = await context.db.exists.Vote({
+  const reviewExists = await context.db.exists.Vote({
     user: { id: userId },
-    link: { id: args.linkId }
+    review: { id: args.reviewId }
   });
-  if (linkExists) {
-    throw new Error(`Already voted for link: ${args.linkId}`);
+  if (reviewExists) {
+    throw new Error(`Already voted for review: ${args.reviewId}`);
   }
 
-  // 3
   return context.db.mutation.createVote(
     {
       data: {
         user: { connect: { id: userId } },
-        link: { connect: { id: args.linkId } }
+        review: { connect: { id: args.reviewId } }
       }
     },
     info

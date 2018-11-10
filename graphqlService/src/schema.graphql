@@ -1,19 +1,35 @@
-# import Link, LinkSubscriptionPayload, Vote, VoteSubscriptionPayload, LinkOrderByInput from "./generated/prisma.graphql"
+# import Review, ReviewSubscriptionPayload, Vote, VoteSubscriptionPayload, ReviewOrderByInput from "./generated/prisma.graphql"
 
 type Query {
   info: String!
-  feed(filter: String, skip: Int, first: Int, orderBy: LinkOrderByInput): Feed!
+  feed(
+    filter: String
+    skip: Int
+    first: Int
+    orderBy: ReviewOrderByInput
+  ): Feed!
 }
 
 type Mutation {
-  post(url: String!, description: String!): Link!
+  post(
+    accessibility: String!
+    cleanliness: Int!
+    locationLat: Float!
+    locationLng: Float!
+    locationPlaceId: Float!
+    numStalls: Int!
+    privacy: Int!
+    rating: Int!
+    reviewText: String!
+    tpQuality: Int!
+  ): Review!
   signup(email: String!, password: String!, name: String!): AuthPayload
   login(email: String!, password: String!): AuthPayload
-  vote(linkId: ID!): Vote
+  vote(reviewId: ID!): Vote
 }
 
 type Subscription {
-  newLink: LinkSubscriptionPayload
+  newReview: ReviewSubscriptionPayload
   newVote: VoteSubscriptionPayload
 }
 
@@ -23,7 +39,7 @@ type AuthPayload {
 }
 
 type Feed {
-  links: [Link!]!
+  reviews: [Review!]!
   count: Int!
 }
 
@@ -31,5 +47,5 @@ type User {
   id: ID!
   name: String!
   email: String!
-  links: [Link!]!
+  reviews: [Review!]!
 }

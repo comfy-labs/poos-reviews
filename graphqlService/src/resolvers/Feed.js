@@ -1,5 +1,5 @@
-function links(parent, args, context, info) {
-  return context.db.query.links({ where: { id_in: parent.linkIds } }, info);
+function reviews(parent, args, context, info) {
+  return context.db.query.reviews({ where: { id_in: parent.reviewIds } }, info);
 }
 
-module.exports = { links };
+module.exports = { reviews };

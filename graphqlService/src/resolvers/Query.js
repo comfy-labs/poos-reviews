@@ -1,14 +1,15 @@
 async function feed(parent, args, context, info) {
-  const where = args.filter
-    ? {
-        OR: [
-          { url_contains: args.filter },
-          { description_contains: args.filter }
-        ]
-      }
-    : {};
+  // const where = args.filter
+  //   ? {
+  //       OR: [
+  //         { url_contains: args.filter },
+  //         { description_contains: args.filter }
+  //       ]
+  //     }
+  //   : {};
+  const where = {};
 
-  const queriedLinks = await context.db.query.links(
+  const queriedReviews = await context.db.query.reviews(
     { where, skip: args.skip, first: args.first, orderBy: args.orderBy },
     `{ id }`
   );
@@ -20,14 +21,14 @@ async function feed(parent, args, context, info) {
       }
     }
   `;
-  const linksConnection = await context.db.query.linksConnection(
+  const reviewsConnection = await context.db.query.reviewsConnection(
     {},
     countSelectionSet
   );
 
   return {
-    count: linksConnection.aggregate.count,
-    linkIds: queriedLinks.map(link => link.id)
+    count: reviewsConnection.aggregate.count,
+    reviewIds: queriedReviews.map(review => review.id)
   };
 }
 

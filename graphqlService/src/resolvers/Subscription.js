@@ -1,11 +1,11 @@
-function newLinkSubscribe(parent, args, context, info) {
-  return context.db.subscription.link(
+function newReviewSubscribe(parent, args, context, info) {
+  return context.db.subscription.review(
     { where: { mutation_in: ["CREATED"] } },
     info
   );
 }
 
-const newLink = { subscribe: newLinkSubscribe };
+const newReview = { subscribe: newReviewSubscribe };
 
 function newVoteSubscribe(parent, args, context, info) {
   return context.db.subscription.vote(
@@ -16,4 +16,4 @@ function newVoteSubscribe(parent, args, context, info) {
 
 const newVote = { subscribe: newVoteSubscribe };
 
-module.exports = { newLink, newVote };
+module.exports = { newReview, newVote };
