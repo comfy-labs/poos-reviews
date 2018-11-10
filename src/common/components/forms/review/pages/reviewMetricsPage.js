@@ -85,7 +85,7 @@ class ReviewMetricsPage extends React.Component {
       cleanliness: "",
       isLocationDropdownOpen: false,
       location: props.defaultLocation || { label: "", value: null },
-      locationOptions: [],
+      locationDropdownOptions: [],
       numStalls: 0,
       privacy: "",
       rating: 0,
@@ -96,6 +96,14 @@ class ReviewMetricsPage extends React.Component {
 
   getField = name => this.state[name];
 
+  getGeocodeFromPlaceId = placeId => {
+    return new Promise((resolve, reject) => {
+      this.geocoder.geocode({ placeId }, (results, status) => {
+        resolve(results[0].geometry.location);
+      });
+    });
+  };
+
   getPlacePredictions = searchText => {
     this.autocomplete.getPlacePredictions(
       {
@@ -104,13 +112,13 @@ class ReviewMetricsPage extends React.Component {
       },
       (predictions, status) => {
         this.setState(state => {
-          const locationOptions = predictions.map(prediction => {
+          const locationDropdownOptions = predictions.map(prediction => {
             return {
               label: prediction.description,
               value: prediction.place_id
             };
           });
-          return { ...state, locationOptions };
+          return { ...state, locationDropdownOptions };
         });
       }
     );
@@ -142,9 +150,43 @@ class ReviewMetricsPage extends React.Component {
   };
 
   handleLocationSelect = location => {
-    this.setState(state => {
-      return { ...state, isLocationDropdownOpen: false, location };
-    });
+    if (this.geocoder) {
+      this.getGeocodeFromPlaceId(location.value).then(geolocation => {
+        this.setState(state => {
+          return {
+            ...state,
+            isLocationDropdownOpen: false,
+            location: {
+              label: location.label,
+              value: {
+                lat: geolocation.lat(),
+                lng: geolocation.lng(),
+                placeId: location.value
+              }
+            }
+          };
+        });
+      });
+    } else {
+      const { Geocoder } = this.props.google.maps;
+      this.geocoder = new Geocoder();
+      this.getGeocodeFromPlaceId(location.value).then(geolocation => {
+        this.setState(state => {
+          return {
+            ...state,
+            isLocationDropdownOpen: false,
+            location: {
+              label: location.label,
+              value: {
+                lat: geolocation.lat(),
+                lng: geolocation.lng(),
+                placeId: location.value
+              }
+            }
+          };
+        });
+      });
+    }
   };
 
   handleRatingChange = rating => {
@@ -225,7 +267,7 @@ class ReviewMetricsPage extends React.Component {
                         onClickAway={this.handleToggleRatingDropdown}
                       >
                         <MenuList>
-                          {this.state.locationOptions.map(option => (
+                          {this.state.locationDropdownOptions.map(option => (
                             <MenuItem
                               key={option.value}
                               onClick={() => {
@@ -256,6 +298,7 @@ class ReviewMetricsPage extends React.Component {
               label="Accessibility"
               margin="normal"
               onChange={this.handleTextFieldChange("accessibility")}
+              required
               select
               value={this.getField("accessibility")}
               variant="outlined"
@@ -276,6 +319,7 @@ class ReviewMetricsPage extends React.Component {
               label="Privacy"
               margin="normal"
               onChange={this.handleTextFieldChange("privacy")}
+              required
               select
               value={this.getField("privacy")}
               variant="outlined"
@@ -295,6 +339,7 @@ class ReviewMetricsPage extends React.Component {
               label="Number of Stalls"
               margin="normal"
               onChange={this.handleTextFieldChange("numStalls")}
+              required
               type="number"
               value={this.getField("numStalls")}
               variant="outlined"
@@ -308,6 +353,7 @@ class ReviewMetricsPage extends React.Component {
               label="Cleanliness"
               margin="normal"
               onChange={this.handleTextFieldChange("cleanliness")}
+              required
               select
               value={this.getField("cleanliness")}
               variant="outlined"
@@ -327,6 +373,7 @@ class ReviewMetricsPage extends React.Component {
               label="Toilet Paper Quality"
               margin="normal"
               onChange={this.handleTextFieldChange("tpQuality")}
+              required
               select
               value={this.getField("tpQuality")}
               variant="outlined"
@@ -342,6 +389,7 @@ class ReviewMetricsPage extends React.Component {
             <TextField
               fullWidth
               id="reviewText"
+              InputLabelProps={{ shrink: true }}
               label="Review / Description"
               margin="normal"
               multiline
@@ -349,6 +397,7 @@ class ReviewMetricsPage extends React.Component {
               onChange={this.handleTextFieldChange("reviewText")}
               required
               rows="4"
+              variant="outlined"
               value={this.getField("reviewText")}
             />
           </Grid>
