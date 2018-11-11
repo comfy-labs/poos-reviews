@@ -252,10 +252,6 @@ class GoogleMap extends React.Component {
     return (
       <React.Fragment>
         <div>
-          <Script
-            url="https://maps.googleapis.com/maps/api/js?key=AIzaSyBGc7C0LtRisG8VxJQonWDh-sL5GIoXYJU&libraries=places"
-            onLoad={this.handleScriptLoad}
-          />
           <SearchBar
             id="autocomplete"
             value={this.state.query}
