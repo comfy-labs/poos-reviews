@@ -1,5 +1,5 @@
 # source: https://us1.prisma.sh/michael-stromberg-2f6e83/database/dev
-# timestamp: Fri Nov 09 2018 23:05:14 GMT-0800 (Pacific Standard Time)
+# timestamp: Sat Nov 10 2018 09:41:40 GMT-0800 (Pacific Standard Time)
 
 type AggregateReview {
   count: Int!
@@ -98,7 +98,7 @@ type Review implements Node {
   cleanliness: Int!
   locationLat: Float!
   locationLng: Float!
-  locationPlaceId: Float!
+  locationPlaceId: String!
   numStalls: Int!
   privacy: Int!
   rating: Int!
@@ -123,7 +123,7 @@ input ReviewCreateInput {
   cleanliness: Int!
   locationLat: Float!
   locationLng: Float!
-  locationPlaceId: Float!
+  locationPlaceId: String!
   numStalls: Int!
   privacy: Int!
   rating: Int!
@@ -148,7 +148,7 @@ input ReviewCreateWithoutPostedByInput {
   cleanliness: Int!
   locationLat: Float!
   locationLng: Float!
-  locationPlaceId: Float!
+  locationPlaceId: String!
   numStalls: Int!
   privacy: Int!
   rating: Int!
@@ -162,7 +162,7 @@ input ReviewCreateWithoutVotesInput {
   cleanliness: Int!
   locationLat: Float!
   locationLng: Float!
-  locationPlaceId: Float!
+  locationPlaceId: String!
   numStalls: Int!
   privacy: Int!
   rating: Int!
@@ -216,7 +216,7 @@ type ReviewPreviousValues {
   cleanliness: Int!
   locationLat: Float!
   locationLng: Float!
-  locationPlaceId: Float!
+  locationPlaceId: String!
   numStalls: Int!
   privacy: Int!
   rating: Int!
@@ -401,28 +401,46 @@ input ReviewScalarWhereInput {
 
   """All values greater than or equal the given value."""
   locationLng_gte: Float
-  locationPlaceId: Float
+  locationPlaceId: String
 
   """All values that are not equal to given value."""
-  locationPlaceId_not: Float
+  locationPlaceId_not: String
 
   """All values that are contained in given list."""
-  locationPlaceId_in: [Float!]
+  locationPlaceId_in: [String!]
 
   """All values that are not contained in given list."""
-  locationPlaceId_not_in: [Float!]
+  locationPlaceId_not_in: [String!]
 
   """All values less than the given value."""
-  locationPlaceId_lt: Float
+  locationPlaceId_lt: String
 
   """All values less than or equal the given value."""
-  locationPlaceId_lte: Float
+  locationPlaceId_lte: String
 
   """All values greater than the given value."""
-  locationPlaceId_gt: Float
+  locationPlaceId_gt: String
 
   """All values greater than or equal the given value."""
-  locationPlaceId_gte: Float
+  locationPlaceId_gte: String
+
+  """All values containing the given string."""
+  locationPlaceId_contains: String
+
+  """All values not containing the given string."""
+  locationPlaceId_not_contains: String
+
+  """All values starting with the given string."""
+  locationPlaceId_starts_with: String
+
+  """All values not starting with the given string."""
+  locationPlaceId_not_starts_with: String
+
+  """All values ending with the given string."""
+  locationPlaceId_ends_with: String
+
+  """All values not ending with the given string."""
+  locationPlaceId_not_ends_with: String
   numStalls: Int
 
   """All values that are not equal to given value."""
@@ -597,7 +615,7 @@ input ReviewUpdateInput {
   cleanliness: Int
   locationLat: Float
   locationLng: Float
-  locationPlaceId: Float
+  locationPlaceId: String
   numStalls: Int
   privacy: Int
   rating: Int
@@ -612,7 +630,7 @@ input ReviewUpdateManyDataInput {
   cleanliness: Int
   locationLat: Float
   locationLng: Float
-  locationPlaceId: Float
+  locationPlaceId: String
   numStalls: Int
   privacy: Int
   rating: Int
@@ -625,7 +643,7 @@ input ReviewUpdateManyMutationInput {
   cleanliness: Int
   locationLat: Float
   locationLng: Float
-  locationPlaceId: Float
+  locationPlaceId: String
   numStalls: Int
   privacy: Int
   rating: Int
@@ -661,7 +679,7 @@ input ReviewUpdateWithoutPostedByDataInput {
   cleanliness: Int
   locationLat: Float
   locationLng: Float
-  locationPlaceId: Float
+  locationPlaceId: String
   numStalls: Int
   privacy: Int
   rating: Int
@@ -675,7 +693,7 @@ input ReviewUpdateWithoutVotesDataInput {
   cleanliness: Int
   locationLat: Float
   locationLng: Float
-  locationPlaceId: Float
+  locationPlaceId: String
   numStalls: Int
   privacy: Int
   rating: Int
@@ -877,28 +895,46 @@ input ReviewWhereInput {
 
   """All values greater than or equal the given value."""
   locationLng_gte: Float
-  locationPlaceId: Float
+  locationPlaceId: String
 
   """All values that are not equal to given value."""
-  locationPlaceId_not: Float
+  locationPlaceId_not: String
 
   """All values that are contained in given list."""
-  locationPlaceId_in: [Float!]
+  locationPlaceId_in: [String!]
 
   """All values that are not contained in given list."""
-  locationPlaceId_not_in: [Float!]
+  locationPlaceId_not_in: [String!]
 
   """All values less than the given value."""
-  locationPlaceId_lt: Float
+  locationPlaceId_lt: String
 
   """All values less than or equal the given value."""
-  locationPlaceId_lte: Float
+  locationPlaceId_lte: String
 
   """All values greater than the given value."""
-  locationPlaceId_gt: Float
+  locationPlaceId_gt: String
 
   """All values greater than or equal the given value."""
-  locationPlaceId_gte: Float
+  locationPlaceId_gte: String
+
+  """All values containing the given string."""
+  locationPlaceId_contains: String
+
+  """All values not containing the given string."""
+  locationPlaceId_not_contains: String
+
+  """All values starting with the given string."""
+  locationPlaceId_starts_with: String
+
+  """All values not starting with the given string."""
+  locationPlaceId_not_starts_with: String
+
+  """All values ending with the given string."""
+  locationPlaceId_ends_with: String
+
+  """All values not ending with the given string."""
+  locationPlaceId_not_ends_with: String
   numStalls: Int
 
   """All values that are not equal to given value."""

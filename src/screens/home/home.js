@@ -1,5 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
+import get from "lodash/get";
 import Script from "react-load-script";
 // material-ui components
 import { withStyles } from "@material-ui/core/styles";
@@ -184,7 +185,10 @@ class Home extends React.Component {
             ...state,
             isLoginModalShowing: false,
             authenticationErrors: payload.errors,
-            user: payload.login.user
+            user: {
+              ...payload.login.user,
+              token: payload.login.token
+            }
           };
         });
       }
@@ -214,7 +218,10 @@ class Home extends React.Component {
             ...state,
             isSignUpModalShowing: false,
             authenticationErrors: payload.errors,
-            user: payload.signup.user
+            user: {
+              ...payload.login.user,
+              token: payload.login.token
+            }
           };
         });
       }
@@ -449,6 +456,7 @@ class Home extends React.Component {
           google={this.state.google}
           isOpen={this.state.isWriteAReviewModalShowing}
           onClose={this.toggleWriteAReviewModal}
+          token={get(this.state, "user.token")}
         />
       </React.Fragment>
     );

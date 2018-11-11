@@ -17,6 +17,8 @@ import Typography from "@material-ui/core/Typography";
 import { withStyles } from "@material-ui/core/styles";
 
 import Rater from "../../../rater/rater";
+import getLocationReviews from "../../../../data/apiRequest/graphQLRequest/reviews/getLocationReviews";
+import postReview from "../../../../data/apiRequest/graphQLRequest/reviews/postReview";
 
 const styles = theme => {
   return {
@@ -71,11 +73,35 @@ class ReviewMetricsPage extends React.Component {
     onClose: PropTypes.func.isRequired,
     goForward: PropTypes.func.isRequired,
     onSavePageState: PropTypes.func.isRequired,
-    previousState: PropTypes.object
+    previousState: PropTypes.object,
+    token: PropTypes.string
   };
 
   constructor(props) {
     super();
+
+    getLocationReviews("ChIJVSvIaJiAhYARwg6LgKkXkB0").then(response => {
+      console.log("query response: ", response);
+    });
+    // if (props.token) {
+    //   postReview(
+    //     {
+    //       accessibility: "public",
+    //       cleanliness: 2,
+    //       locationLat: 37.7788711,
+    //       locationLng: -122.4232144,
+    //       locationPlaceId: "ChIJVSvIaJiAhYARwg6LgKkXkB0",
+    //       numStalls: 1,
+    //       privacy: 3,
+    //       rating: 2,
+    //       reviewText: "This bathroom was pretty good.",
+    //       tpQuality: 4
+    //     },
+    //     props.token
+    //   ).then(response => {
+    //     console.log("post response: ", response);
+    //   });
+    // }
 
     // debounce typeahead search queries to the Google Maps Places api
     this.debouncedGetPlacePredictions = debounce(this.getPlacePredictions, 300);
