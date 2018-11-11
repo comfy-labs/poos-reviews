@@ -50,7 +50,8 @@ class WriteAReviewModal extends React.Component {
     classes: PropTypes.object.isRequired,
     google: PropTypes.object,
     isOpen: PropTypes.bool.isRequired,
-    onClose: PropTypes.func.isRequired
+    onClose: PropTypes.func.isRequired,
+    token: PropTypes.string
   };
 
   constructor() {
@@ -111,6 +112,7 @@ class WriteAReviewModal extends React.Component {
                         onClose={this.props.onClose}
                         onSavePageState={this.setPageState("metricsPage")}
                         previousState={previousMetricsPageState}
+                        token={this.props.token}
                       />
                     </WizardPage>
                     <WizardPage isHidden={currentPageIndex !== 1}>

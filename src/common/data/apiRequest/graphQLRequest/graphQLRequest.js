@@ -65,7 +65,9 @@ export const graphQLRequestFields = {
 // export const graphQLRequestSelection
 
 export default function graphQLRequest(endpoint, requestOptions) {
-  const graphQLClient = new GraphQLClient(endpoint);
+  const graphQLClient = new GraphQLClient(endpoint, {
+    headers: requestOptions.headers
+  });
   const requestPayload = buildRequestPayload(requestOptions);
   return graphQLClient
     .request(requestPayload)
