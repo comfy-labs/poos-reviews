@@ -5,7 +5,7 @@ type Review {
   cleanliness: Int!
   locationLat: Float!
   locationLng: Float!
-  locationPlaceId: Float!
+  locationPlaceId: String!
   numStalls: Int!
   privacy: Int!
   rating: Int!

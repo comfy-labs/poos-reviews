@@ -1,4 +1,31 @@
 async function feed(parent, args, context, info) {
+  const { filter = {} } = args;
+  const filters = [];
+
+  if (filter.accessibility) {
+    filters.push({ accessibility_in: [filter.accessibility] });
+  }
+  if (filter.cleanliness) {
+    filters.push({ cleanliness_gte: filter.cleanliness });
+  }
+  if (filter.locationPlaceId) {
+    filters.push({ locationPlaceId_contains: filter.locationPlaceId });
+  }
+  if (filter.numStalls) {
+    filters.push({ numStalls_gte: filter.numStalls });
+  }
+  if (filter.privacy) {
+    filters.push({ privacy_gte: filter.privacy });
+  }
+  if (filter.rating) {
+    filters.push({ rating_gte: filter.rating });
+  }
+  if (filter.tpQuality) {
+    filters.push({ tpQuality_gte: filter.tpQuality });
+  }
+
+  const where = filters.length ? { OR: filters } : {};
+
   // const where = args.filter
   //   ? {
   //       OR: [
@@ -7,7 +34,6 @@ async function feed(parent, args, context, info) {
   //       ]
   //     }
   //   : {};
-  const where = {};
 
   const queriedReviews = await context.db.query.reviews(
     { where, skip: args.skip, first: args.first, orderBy: args.orderBy },

@@ -1,9 +1,19 @@
 # import Review, ReviewSubscriptionPayload, Vote, VoteSubscriptionPayload, ReviewOrderByInput from "./generated/prisma.graphql"
 
+input Filter {
+  accessibility: String
+  cleanliness: Int
+  locationPlaceId: String
+  numStalls: Int
+  privacy: Int
+  rating: Int
+  tpQuality: Int
+}
+
 type Query {
   info: String!
   feed(
-    filter: String
+    filter: Filter
     skip: Int
     first: Int
     orderBy: ReviewOrderByInput
@@ -16,7 +26,7 @@ type Mutation {
     cleanliness: Int!
     locationLat: Float!
     locationLng: Float!
-    locationPlaceId: Float!
+    locationPlaceId: String!
     numStalls: Int!
     privacy: Int!
     rating: Int!
