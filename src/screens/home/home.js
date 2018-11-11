@@ -426,6 +426,7 @@ class Home extends React.Component {
             color="textSecondary"
             component="p"
           >
+              <span>Browse the map for reviews</span>
               <Button onClick={this.userClickedThePoop} size="small">
                 <img src={poopEmoji} width="120px" height="120px" alt="poopEmoji"/>
 
