@@ -39,7 +39,9 @@ class GoogleMap extends React.Component {
         }).isRequired
       })
     ).isRequired,
-    google: PropTypes.object
+    google: PropTypes.object,
+    locationConsent: PropTypes.bool
+
   };
 
   constructor(props) {
@@ -66,8 +68,9 @@ class GoogleMap extends React.Component {
 
   componentDidUpdate(prevProps, prevState) {
     // create Google Maps instance if google object is available
-    if (!this.map && this.props.google) {
+    if (!this.map && this.props.google && this.props.locationConsent) {
       this.buildMap();
+      console.log('BUILDING MAP');
     }
   }
 
@@ -241,9 +244,12 @@ class GoogleMap extends React.Component {
       map: this.map,
       title: "Poop"
     });
+    this.map.panTo(geolocation);
   }
 
   render() {
+    const shouldQueryLocation = this.props.locationConsent;
+    if (shouldQueryLocation) {
     return (
       <React.Fragment>
         <div>
@@ -276,6 +282,11 @@ class GoogleMap extends React.Component {
         </Paper>
       </React.Fragment>
     );
+    } else {
+      return (
+          <div></div>
+      );
+    }
   }
 }
 
