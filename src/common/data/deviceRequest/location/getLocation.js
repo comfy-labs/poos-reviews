@@ -17,7 +17,8 @@ export default function getLocation() {
         resolve({
           data: {
             lat: position.coords.latitude,
-            lng: position.coords.longitude
+            lng: position.coords.longitude,
+            accuracy: position.coords.accuracy
           }
         });
       },

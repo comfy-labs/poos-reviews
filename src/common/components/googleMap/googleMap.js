@@ -39,19 +39,21 @@ class GoogleMap extends React.Component {
         }).isRequired
       })
     ).isRequired,
-    google: PropTypes.object
+    google: PropTypes.object,
+    locationConsent: PropTypes.bool,
+    currentLocationMarker: PropTypes.object
   };
 
   constructor(props) {
     super(props);
     this.map = null;
     this.state = {
-      currentLocation: { lat: 37.774929, lng: -122.419418 },
+      currentLocation: { lat: null, lng: null},
       currentLocationErrors: null,
       isLoading: true
     };
 
-    this.handleScriptLoad = this.handleScriptLoad.bind(this);
+    // this.handleScriptLoad = this.handleScriptLoad.bind(this);
     this.handlePlaceSelect = this.handlePlaceSelect.bind(this);
     this.handleFocusChange = this.handleFocusChange.bind(this);
   }
@@ -66,7 +68,14 @@ class GoogleMap extends React.Component {
 
   componentDidUpdate(prevProps, prevState) {
     // create Google Maps instance if google object is available
-    if (!this.map && this.props.google) {
+    if (!this.map && this.props.google && this.props.locationConsent) {
+      /*global google*/
+      var options = { types: ["establishment"] };
+      this.autocomplete = new google.maps.places.Autocomplete(
+          document.getElementById("autocomplete"),
+          options
+      );
+      this.autocomplete.addListener("place_changed", this.handlePlaceSelect);
       this.buildMap();
     }
   }
@@ -91,42 +100,35 @@ class GoogleMap extends React.Component {
 
     // Grab the DOM element to put the map in
     const node = ReactDOM.findDOMNode(this.refs.map);
-    // Get the user's current location, which is an asynchronous request
-    const currentLocationPromise = new Promise((resolve, reject) => {
-      if (navigator.geolocation) {
-        console.log("\tResolving current location promise...");
-        navigator.geolocation.getCurrentPosition(function(position) {
-          resolve({
-            lat: position.coords.latitude,
-            lng: position.coords.longitude,
-            accuracy: position.coords.accuracy
-          });
-        });
-      }
-    });
-    // Once the promise resolves, store the user's location and center the map
     let component = this;
-    currentLocationPromise.then(
-      resolvedValue => {
-        console.log("Current location promise succeeded");
-        component.state.currentLocation = resolvedValue;
-        const mapConfig = component.buildMapConfig();
-        component.map = new Map(node, mapConfig);
-        component.map.controls[RIGHT_BOTTOM].push(component.buildGPSButton());
-        var circle = new google.maps.Circle({
-          center: resolvedValue,
-          radius: resolvedValue.accuracy
-        });
-        component.autocomplete.setBounds(circle.getBounds());
-        component.setState(state => {
-          return { ...state, isLoading: false };
-        });
-      },
-      error => {
-        console.log("Current Location promise failed!");
-        console.log(error);
-      }
-    );
+    getLocation()
+      .then(response => {
+          console.log("Current location promise succeeded");
+          component.state.currentLocation = response.data;
+          const mapConfig = component.buildMapConfig();
+          component.map = new Map(node, mapConfig);
+          component.map.controls[RIGHT_BOTTOM].push(component.buildGPSButton());
+          var circle = new google.maps.Circle({
+              center: response.data,
+              radius: response.data.accuracy
+          });
+          component.autocomplete.setBounds(circle.getBounds());
+          const blueDotMarker = this.createMarkerForCurrentLocation(response.data);
+          component.setState(state => {
+              return { ...state, isLoading: false, currentLocationMarker: blueDotMarker};
+          });
+      })
+      .catch(response => {
+
+      });
+  };
+
+  createMarkerForCurrentLocation = (locationData) => {
+      return new google.maps.Marker({
+          position: locationData,
+          map: this.map,
+          icon: blueDot
+      });
   };
 
   buildMarkers = () => {
@@ -202,9 +204,15 @@ class GoogleMap extends React.Component {
 
     getLocation()
       .then(response => {
+        this.map.panTo(response.data);
+        let blueDotMarker = this.state.currentLocationMarker;
+        if (this.hasCurrentLocationChanged(this.state.currentLocation, response.data)) {
+          this.state.currentLocationMarker.setMap(null);
+          blueDotMarker = this.createMarkerForCurrentLocation(response.data);
+        }
         this.setState(state => {
           const currentLocation = response.data;
-          return { ...state, currentLocation, isLoading: false };
+          return { ...state, currentLocation, currentLocationMarker: blueDotMarker, isLoading: false };
         });
       })
       .catch(response => {
@@ -222,13 +230,7 @@ class GoogleMap extends React.Component {
   handleFocusChange = event => {};
 
   handleScriptLoad() {
-    var options = { types: ["establishment"] };
-    /*global google*/
-    this.autocomplete = new google.maps.places.Autocomplete(
-      document.getElementById("autocomplete"),
-      options
-    );
-    this.autocomplete.addListener("place_changed", this.handlePlaceSelect);
+
   }
 
   handlePlaceSelect() {
@@ -241,16 +243,15 @@ class GoogleMap extends React.Component {
       map: this.map,
       title: "Poop"
     });
+    this.map.panTo(geolocation);
   }
 
   render() {
+    const shouldQueryLocation = this.props.locationConsent;
+    if (shouldQueryLocation) {
     return (
       <React.Fragment>
         <div>
-          <Script
-            url="https://maps.googleapis.com/maps/api/js?key=AIzaSyBGc7C0LtRisG8VxJQonWDh-sL5GIoXYJU&libraries=places"
-            onLoad={this.handleScriptLoad}
-          />
           <SearchBar
             id="autocomplete"
             value={this.state.query}
@@ -276,6 +277,11 @@ class GoogleMap extends React.Component {
         </Paper>
       </React.Fragment>
     );
+    } else {
+      return (
+          <div></div>
+      );
+    }
   }
 }
 
