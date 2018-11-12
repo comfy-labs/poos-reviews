@@ -15,6 +15,7 @@ import getLocation from "../../data/deviceRequest/location/getLocation";
 // @todo: make sure these work in production mode
 import blueDot from "../../../blue-dot.png";
 import toilet from "../../../toilet25.png";
+import getLocationReviews from "../../data/apiRequest/graphQLRequest/reviews/getLocationReviews";
 
 const styles = theme => ({
   linearProgress: {
@@ -41,7 +42,10 @@ class GoogleMap extends React.Component {
     ).isRequired,
     google: PropTypes.object,
     locationConsent: PropTypes.bool,
-    currentLocationMarker: PropTypes.object
+    currentLocationMarker: PropTypes.object,
+    query: PropTypes.string,
+    mapBounds: PropTypes.object
+
   };
 
   constructor(props) {
@@ -55,7 +59,6 @@ class GoogleMap extends React.Component {
 
     // this.handleScriptLoad = this.handleScriptLoad.bind(this);
     this.handlePlaceSelect = this.handlePlaceSelect.bind(this);
-    this.handleFocusChange = this.handleFocusChange.bind(this);
   }
 
   componentDidMount() {
@@ -79,6 +82,18 @@ class GoogleMap extends React.Component {
       this.buildMap();
     }
   }
+
+  checkCurrentMapForReviewedLocations = () => {
+    let mapBounds = this.state.mapBounds;
+    console.log('Checking for currently reviewed locations');
+    getLocationReviews("ChIJVSvIaJiAhYARwg6LgKkXkB0").then(response => {
+        response.feed.reviews.forEach(function(f){
+            console.log(f);
+            let latLng = {lat: f.locationLat, lng: f.locationLng};
+            console.log(mapBounds.contains(latLng));
+        });
+    });
+  };
 
   buildCurrentLocationMarker = () => {
     const { Marker } = this.props.google.maps;
@@ -107,6 +122,12 @@ class GoogleMap extends React.Component {
           component.state.currentLocation = response.data;
           const mapConfig = component.buildMapConfig();
           component.map = new Map(node, mapConfig);
+          google.maps.event.addListener(component.map, "bounds_changed", function() {
+              component.setState(state => {
+                return { ...state, mapBounds: component.map.getBounds(), isLoading: false};
+              });
+              component.checkCurrentMapForReviewedLocations();
+          });
           component.map.controls[RIGHT_BOTTOM].push(component.buildGPSButton());
           var circle = new google.maps.Circle({
               center: response.data,
@@ -147,7 +168,7 @@ class GoogleMap extends React.Component {
   buildGPSButton = () => {
     let controlDiv = document.createElement("div");
 
-    let firstChild = document.createElement("button");
+    let firstChild = document.createElement("");
     firstChild.style.backgroundColor = "#fff";
     firstChild.style.border = "none";
     firstChild.style.outline = "none";
@@ -227,23 +248,22 @@ class GoogleMap extends React.Component {
     this.setState({ inputValue: event.target.value });
   };
 
-  handleFocusChange = event => {};
-
-  handleScriptLoad() {
-
-  }
-
   handlePlaceSelect() {
     let addressObject = this.autocomplete.getPlace();
+    // For some reason, the query after selecting shows just what you typed in, but not what you selected
+    // So, this reconstructs it kinda and sets it
+    let selectedQuery = addressObject.name + ', ' + addressObject.formatted_address;
     let lat = addressObject.geometry.location.lat();
     let lng = addressObject.geometry.location.lng();
     let geolocation = { lat: lat, lng: lng };
     var marker = new google.maps.Marker({
       position: geolocation,
       map: this.map,
-      title: "Poop"
     });
     this.map.panTo(geolocation);
+    this.setState(state => {
+      return { ...state, selectedQuery};
+    });
   }
 
   render() {
@@ -254,9 +274,7 @@ class GoogleMap extends React.Component {
         <div>
           <SearchBar
             id="autocomplete"
-            value={this.state.query}
-            onFocus={this.handleFocusChange}
-            onChange={newValue => this.setState({ value: newValue })}
+            value={this.state.selectedQuery}
           />
         </div>
         <Paper className={this.props.classes.paper}>
