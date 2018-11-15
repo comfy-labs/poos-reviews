@@ -268,9 +268,6 @@ class Home extends React.Component {
         />
         <div className={classes.layout}>
           <Toolbar className={classes.toolbarMain}>
-            <Button onClick={this.toggleWriteAReviewModal} size="small">
-              Write a Review
-            </Button>
             <Typography
               component="h2"
               variant="h5"
@@ -281,20 +278,27 @@ class Home extends React.Component {
             >
               Poos Reviews
             </Typography>
-            <Button
-              size="small"
-              onClick={this.toggleLoginModalOpenState}
-              style={{ marginRight: 10 }}
-            >
-              Log In
+          </Toolbar>
+          <Toolbar className={classes.toolbarSecondary}>
+            <Button onClick={this.toggleWriteAReviewModal} size="small">
+              Write a Review
             </Button>
-            <Button
-              variant="outlined"
-              size="small"
-              onClick={this.toggleSignUpModalOpenState}
-            >
-              Sign Up
-            </Button>
+            <div>
+              <Button
+                size="small"
+                onClick={this.toggleLoginModalOpenState}
+                style={{ marginRight: 10 }}
+              >
+                Log In
+              </Button>
+              <Button
+                variant="outlined"
+                size="small"
+                onClick={this.toggleSignUpModalOpenState}
+              >
+                Sign Up
+              </Button>
+            </div>
           </Toolbar>
           {/*<Toolbar variant="dense" className={classes.toolbarSecondary}>*/}
           {/*{sections.map(section => (*/}

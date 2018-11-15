@@ -1,5 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
+import get from "lodash/get";
 
 // import Button from "@material-ui/core/Button";
 import Dialog from "@material-ui/core/Dialog";
@@ -18,7 +19,6 @@ import Wizard, {
 import ReviewMetricsPage from "./pages/reviewMetricsPage";
 import ReviewUploadImagesPage from "./pages/reviewUploadImagesPage";
 import ReviewConfirmationPage from "./pages/reviewConfirmationPage";
-import postReview from "../../../data/apiRequest/graphQLRequest/reviews/postReview";
 
 const styles = theme => {
   return {
@@ -66,44 +66,28 @@ class WriteAReviewModal extends React.Component {
   getPageState = pageName => this.state[pageName];
 
   setPageState = pageName => newPageState => {
-    console.log('set page state');
     this.setState(state => {
       return { ...state, [pageName]: newPageState };
     });
   };
 
-  componentDidUpdate(prevProps) {
-      // Hacky way for me to tell that we're on the confirmation page
-      if (this.state['metricsPage'] && this.state['uploadImagesPage']) {
-        console.log('On submit review');
-        console.log(this.state);
-        let m = this.state.metricsPage;
-        let u = this.state.uploadImagesPage;
-
-        if (this.props.token) {
-            postReview(
-                {
-                  accessibility: m.accessibility,
-                  cleanliness: m.cleanliness,
-                  locationLat: m.location.value.lat,
-                    locationLng: m.location.value.lng,
-                    locationPlaceId: m.location.value.placeId,
-                    numStalls: parseInt(m.numStalls),
-                    privacy: m.privacy,
-                    rating: m.rating,
-                    reviewText: m.reviewText,
-                    tpQuality: m.tpQuality
-                },
-                this.props.token
-            ).then(response => {
-                console.log("post response: ", response);
-            });
-        }
-      }
-  };
+  formatReview(metricsPageState) {
+    return {
+      accessibility: get(metricsPageState, "accessibility"),
+      cleanliness: get(metricsPageState, "cleanliness"),
+      locationLat: get(metricsPageState, "location.value.lat"),
+      locationLng: get(metricsPageState, "location.value.lng"),
+      locationPlaceId: get(metricsPageState, "location.value.placeId"),
+      numStalls: get(metricsPageState, "numStalls"),
+      privacy: get(metricsPageState, "privacy"),
+      rating: get(metricsPageState, "rating"),
+      reviewText: get(metricsPageState, "reviewText"),
+      tpQuality: get(metricsPageState, "tpQuality")
+    };
+  }
 
   render() {
-    const { classes } = this.props;
+    const { classes, token } = this.props;
     const {
       metricsPage: previousMetricsPageState,
       uploadImagesPage: previousUploadImagesState
@@ -157,8 +141,13 @@ class WriteAReviewModal extends React.Component {
                     </WizardPage>
                     <WizardPage isHidden={currentPageIndex !== 2}>
                       <ReviewConfirmationPage
-                        onSavePageState={this.setPageState("reviewConfirmationPage")}
-                        previousState={previousUploadImagesState}
+                        goBack={goBack}
+                        onClose={this.props.onClose}
+                        onSavePageState={this.setPageState(
+                          "reviewConfirmationPage"
+                        )}
+                        review={this.formatReview(previousMetricsPageState)}
+                        token={token}
                       />
                     </WizardPage>
                   </React.Fragment>

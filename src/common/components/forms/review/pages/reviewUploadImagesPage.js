@@ -97,7 +97,7 @@ class ReviewUploadImagesPage extends React.Component {
     return (
       <div className={classes.container}>
         <Typography variant="h6" gutterBottom>
-          Upload Images
+          Upload Images (Under Construction)
         </Typography>
         <div>
           <input

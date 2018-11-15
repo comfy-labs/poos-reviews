@@ -17,8 +17,8 @@ import Typography from "@material-ui/core/Typography";
 import { withStyles } from "@material-ui/core/styles";
 
 import Rater from "../../../rater/rater";
-import getLocationReviews from "../../../../data/apiRequest/graphQLRequest/reviews/getLocationReviews";
-import postReview from "../../../../data/apiRequest/graphQLRequest/reviews/postReview";
+// import getLocationReviews from "../../../../data/apiRequest/graphQLRequest/reviews/getLocationReviews";
+// import postReview from "../../../../data/apiRequest/graphQLRequest/reviews/postReview";
 
 const styles = theme => {
   return {
@@ -80,9 +80,9 @@ class ReviewMetricsPage extends React.Component {
   constructor(props) {
     super();
 
-    getLocationReviews("ChIJVSvIaJiAhYARwg6LgKkXkB0").then(response => {
-      console.log("query response: ", response);
-    });
+    // getLocationReviews("ChIJVSvIaJiAhYARwg6LgKkXkB0").then(response => {
+    //   console.log("query response: ", response);
+    // });
 
     // debounce typeahead search queries to the Google Maps Places api
     this.debouncedGetPlacePredictions = debounce(this.getPlacePredictions, 300);
@@ -118,21 +118,29 @@ class ReviewMetricsPage extends React.Component {
         types: ["establishment"]
       },
       (predictions, status) => {
-        this.setState(state => {
-          const locationDropdownOptions = predictions.map(prediction => {
-            return {
-              label: prediction.description,
-              value: prediction.place_id
-            };
+        if (predictions) {
+          this.setState(state => {
+            const locationDropdownOptions = predictions.map(prediction => {
+              return {
+                label: prediction.description,
+                value: prediction.place_id
+              };
+            });
+            return { ...state, locationDropdownOptions };
           });
-          return { ...state, locationDropdownOptions };
-        });
+        }
       }
     );
   };
 
   handleTextFieldChange = name => event => {
-    this.setState({ [name]: event.target.value });
+    let value = event.target.value;
+    this.setState(state => {
+      if (name === "numStalls") {
+        value = parseInt(value);
+      }
+      return { ...state, [name]: value };
+    });
   };
 
   handleLocationChange = event => {
@@ -196,31 +204,6 @@ class ReviewMetricsPage extends React.Component {
     }
   };
 
-  handleReviewSubmit = () => {
-
-      console.log('handle review submit');
-
-    // if (props.token) {
-    //     postReview(
-    //         {
-    //             accessibility: "public",
-    //             cleanliness: 2,
-    //             locationLat: 37.7788711,
-    //             locationLng: -122.4232144,
-    //             locationPlaceId: "ChIJVSvIaJiAhYARwg6LgKkXkB0",
-    //             numStalls: 1,
-    //             privacy: 3,
-    //             rating: 2,
-    //             reviewText: "This bathroom was pretty good.",
-    //             tpQuality: 4
-    //         },
-    //         props.token
-    //     ).then(response => {
-    //         console.log("post response: ", response);
-    //     });
-    // }
-  };
-
   handleRatingChange = rating => {
     this.setState(state => {
       return { ...state, rating };
@@ -246,7 +229,7 @@ class ReviewMetricsPage extends React.Component {
   };
 
   render() {
-    const { classes, google } = this.props;
+    const { classes, google, token } = this.props;
 
     return (
       <React.Fragment>
@@ -440,13 +423,14 @@ class ReviewMetricsPage extends React.Component {
             Cancel
           </Button>
           <Button
-            onClick={this.handleNextClick}
+            autoFocus
             className={classes.button}
             color="primary"
-            autoFocus
+            disabled={!token}
+            onClick={this.handleNextClick}
             variant="contained"
           >
-            Next
+            {token ? "Next" : "Please login or signup!"}
           </Button>
         </DialogActions>
       </React.Fragment>
