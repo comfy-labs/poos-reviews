@@ -19,7 +19,7 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build && mv build ../server",
-    "test": "react-scripts test",
+    "test": "CI=true react-scripts test --env=jsdom",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
@@ -32,7 +32,13 @@
     "not op_mini all"
   ],
   "devDependencies": {
+    "husky": "^1.2.0",
     "prettier": "^1.14.3"
   },
-  "homepage": "https://comfy-labs.github.io/poos-reviews"
+  "homepage": "https://comfy-labs.github.io/poos-reviews",
+  "husky": {
+    "hooks": {
+      "pre-push": "yarn test"
+    }
+  }
 }
