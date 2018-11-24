@@ -3,6 +3,7 @@
 ## Getting Started
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+
 [See the README here](/README-create-react-app.md)
 
 ### Running the React App
@@ -56,6 +57,18 @@ cd server
 graphql playground
 ```
 
+### Deploying new UI to GitHub pages
+
+If you update the UI and want the gh-pages site to reflect those changes
+(e.g. You're want to build a web app for your friend and demo it at his
+wedding), navigate to the `client` directory and run the command
+`yarn deploy:ghPages`.
+
+Only the UI will be functional (unless you're running the server and
+gqlService while viewing the gh-pages site locally).
+
+After deploying the gh-pages site, you can see it at https://comfy-labs.github.io/poos-reviews.
+
 ## Getting Started
 
 ### Prettier
@@ -71,8 +84,8 @@ Then make sure you enable "Format on Save"
 Create React App is divided into two packages:
 
 - Make commits
-  - To move a GitHub Issue to the Done column, add (Closes #<issue number>) to
-  the end of your commit message.
+  - To move a GitHub Issue to the Done column, add `(Closes #<issue number>)` to
+  the end of your last relevant commit message.
 - Rebase
   - When you're ready to add your commits to the main repo, we need to pull the
   latest changes from master.

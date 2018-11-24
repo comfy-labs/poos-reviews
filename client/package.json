@@ -18,9 +18,12 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build && mv build ../server",
+    "build": "react-scripts build",
+    "build:ghPages": "(if [ -d ../ghPages/build ]; then rm -r ../ghPages/build; fi;) && react-scripts build && mv build ../ghPages",
+    "build:server": "(if [ -d ../server/build ]; then rm -r ../server/build; fi;) && react-scripts build && mv build ../server",
     "test": "CI=true react-scripts test --env=jsdom",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "deploy:ghPages": "yarn build:ghPages && gh-pages -d ../ghPages/build"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -32,6 +35,7 @@
     "not op_mini all"
   ],
   "devDependencies": {
+    "gh-pages": "^2.0.1",
     "husky": "^1.2.0",
     "prettier": "^1.14.3"
   },
