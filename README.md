@@ -69,7 +69,7 @@ gqlService while viewing the gh-pages site locally).
 
 After deploying the gh-pages site, you can see it at https://comfy-labs.github.io/poos-reviews.
 
-## Getting Started
+## Contributing
 
 ### Prettier
 
