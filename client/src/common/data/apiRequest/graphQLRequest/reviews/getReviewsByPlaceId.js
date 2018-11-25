@@ -3,7 +3,7 @@ import graphQLRequest from "../graphQLRequest";
 // @todo: centralize this configuration
 const endpoint = "http://127.0.0.1:4000/";
 
-export default function getLocationReviews(placeId) {
+export default function getReviewsByPlaceId(placeId) {
   const requestOptions = {
     type: "query",
     field: "feed",

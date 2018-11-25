@@ -17,7 +17,8 @@ import Typography from "@material-ui/core/Typography";
 import { withStyles } from "@material-ui/core/styles";
 
 import Rater from "../../../rater/rater";
-// import getLocationReviews from "../../../../data/apiRequest/graphQLRequest/reviews/getLocationReviews";
+// import getReviewsByUserId from "../../../../data/apiRequest/graphQLRequest/reviews/getReviewByUserId";
+// import getReviewsByPlaceId from "../../../../data/apiRequest/graphQLRequest/reviews/getReviewsByPlaceId";
 // import postReview from "../../../../data/apiRequest/graphQLRequest/reviews/postReview";
 
 const styles = theme => {
@@ -80,9 +81,21 @@ class ReviewMetricsPage extends React.Component {
   constructor(props) {
     super();
 
-    // getLocationReviews("ChIJVSvIaJiAhYARwg6LgKkXkB0").then(response => {
-    //   console.log("query response: ", response);
-    // });
+    /*
+      // Uncomment out this code block to demo querying for reviews by a user.
+      // This query is not paginated and will return all reviews for this user.
+      getReviewsByUserId("cjnpg4o6q2dis0a54ub8bhok1").then(response => {
+        console.log("query response: ", response);
+      });
+     */
+
+    /*
+      // Uncomment out this code block to demo querying for reviews by placedId.
+      // This query is not paginated and will return all reviews for this place.
+      getReviewsByPlaceId("ChIJVSvIaJiAhYARwg6LgKkXkB0").then(response => {
+        console.log("query response: ", response);
+      });
+     */
 
     // debounce typeahead search queries to the Google Maps Places api
     this.debouncedGetPlacePredictions = debounce(this.getPlacePredictions, 300);
