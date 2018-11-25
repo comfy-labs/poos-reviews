@@ -10,7 +10,11 @@ import { withStyles } from "@material-ui/core/styles";
 import blueDot from "../../../blue-dot.png";
 import toilet from "../../../toilet25.png";
 import getLocation from "../../data/deviceRequest/location/getLocation";
-import { buildGPSButton, hasCurrentLocationChanged } from "./helpers";
+import {
+  buildGPSButton,
+  buildSearchThisAreaButton,
+  hasCurrentLocationChanged
+} from "./helpers";
 
 // material-ui css-in-js hoc argument
 const styles = theme => ({
@@ -43,10 +47,12 @@ class GoogleMap extends React.Component {
     super();
     this.map = null;
     this.state = {
-      // default to san francisco ¯\_(ツ)_/¯
-      currentLocation: { lat: 37.774929, lng: -122.419418 },
+      currentLocation: { lat: 37.774929, lng: -122.419418 }, // default to san francisco ¯\_(ツ)_/¯
       currentLocationErrors: null,
-      isLoading: true
+      haveBoundsChanged: false,
+      isLoading: true,
+      isMapInitialized: false,
+      isShowingSearchButton: false
     };
   }
 
@@ -74,6 +80,17 @@ class GoogleMap extends React.Component {
     if (this.map) {
       this.buildMarkers();
     }
+
+    // update search button visibility
+    if (
+      this.searchButton &&
+      prevState.isShowingSearchButton !== this.state.isShowingSearchButton
+    ) {
+      this.searchButton.firstChild.style.visibility = this.state
+        .isShowingSearchButton
+        ? "visible"
+        : "hidden";
+    }
   }
 
   buildCurrentLocationMarker = () => {
@@ -94,8 +111,9 @@ class GoogleMap extends React.Component {
 
   buildMap = () => {
     const {
+      event,
       Map,
-      ControlPosition: { RIGHT_BOTTOM }
+      ControlPosition: { RIGHT_BOTTOM, TOP_CENTER }
     } = this.props.google.maps;
 
     // build Google Map instance
@@ -103,9 +121,21 @@ class GoogleMap extends React.Component {
     const mapConfig = this.buildMapConfig();
     this.map = new Map(node, mapConfig);
 
+    // add event listeners
+    this.map.addListener("bounds_changed", this.handleBoundsChange);
+    event.addListenerOnce(this.map, "idle", this.handleMapInitialize);
+    event.addListener(this.map, "idle", this.handleIdleChange);
+
     // build GPS button
     const gpsButton = buildGPSButton(this.handleGPSClick);
     this.map.controls[RIGHT_BOTTOM].push(gpsButton);
+
+    // build search button
+    const searchButton = buildSearchThisAreaButton(
+      this.handleSearchButtonClick
+    );
+    this.searchButton = searchButton;
+    this.map.controls[TOP_CENTER].push(searchButton);
   };
 
   buildMapConfig = () => {
@@ -132,6 +162,12 @@ class GoogleMap extends React.Component {
     /* eslint-enable no-unused-vars */
   };
 
+  handleBoundsChange = () => {
+    if (!this.state.haveBoundsChanged && this.state.isMapInitialized) {
+      this.setState(state => ({ ...state, haveBoundsChanged: true }));
+    }
+  };
+
   handleGPSClick = () => {
     this.setState(state => ({ ...state, isLoading: true }));
 
@@ -148,6 +184,26 @@ class GoogleMap extends React.Component {
           return { ...state, currentLocationErrors, isLoading: false };
         });
       });
+  };
+
+  handleIdleChange = () => {
+    if (this.state.haveBoundsChanged) {
+      this.setState(state => ({
+        ...state,
+        haveBoundsChanged: false,
+        isShowingSearchButton: true
+      }));
+    }
+  };
+
+  handleMapInitialize = () => {
+    this.setState(state => ({ ...state, isMapInitialized: true }));
+  };
+
+  handleSearchButtonClick = () => {
+    // get current bounds
+    // this.props.onSearchButtonClick && this.props.onSearchButtonClick();
+    this.setState(state => ({ ...state, isShowingSearchButton: false }));
   };
 
   render() {

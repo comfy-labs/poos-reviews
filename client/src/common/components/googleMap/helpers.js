@@ -35,6 +35,32 @@ export function buildGPSButton(handleClick) {
   return controlDiv;
 }
 
+export function buildSearchThisAreaButton(handleClick) {
+  let controlDiv = document.createElement("div");
+  controlDiv.index = 1;
+
+  let firstChild = document.createElement("button");
+  firstChild.style.backgroundColor = "#fff";
+  firstChild.style.border = "none";
+  firstChild.style.borderRadius = "2px";
+  firstChild.style.boxShadow = "0 1px 4px rgba(0,0,0,0.3)";
+  firstChild.style.cursor = "pointer";
+  firstChild.style.fontSize = "18px";
+  firstChild.style.height = "40px";
+  firstChild.style.visibility = "hidden";
+  firstChild.style.lineHeight = "40px";
+  firstChild.style.margin = "10px 10px 0 0";
+  firstChild.style.outline = "none";
+  firstChild.style.padding = "0";
+  firstChild.style.width = "160px";
+  firstChild.title = "Search This Area";
+  firstChild.innerText = "Search This Area";
+  firstChild.addEventListener("click", handleClick);
+
+  controlDiv.appendChild(firstChild);
+  return controlDiv;
+}
+
 export function hasCurrentLocationChanged(oldLocation, newLocation) {
   return (
     get(oldLocation, "lat") !== get(newLocation, "lat") ||

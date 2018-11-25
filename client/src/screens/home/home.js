@@ -19,7 +19,7 @@ import login from "../../common/data/apiRequest/graphQLRequest/authentication/lo
 import signUp from "../../common/data/apiRequest/graphQLRequest/authentication/signUp";
 
 // @todo: remove
-const data = [
+const mockData = [
   {
     location: {
       lat: 37.797667,
@@ -150,12 +150,14 @@ class Home extends React.Component {
       isLoginModalShowing: false,
       isSignUpModalShowing: false,
       isWriteAReviewModalShowing: false,
-      // authentication
+      // authentication state
       authenticationErrors: null,
       user: null,
-      // @todo: remove this when google is served from server
+      // google map state
       google: null,
-      locationConsent: false
+      locationConsent: false,
+      // review state
+      data: mockData // @todo: remove when real data can be populated
     };
   }
 
@@ -332,7 +334,7 @@ class Home extends React.Component {
             </Paper>
             {/* End main featured post */}
             <GoogleMap
-              data={data}
+              data={this.state.data}
               google={this.state.google}
               locationConsent={this.state.locationConsent}
             />
