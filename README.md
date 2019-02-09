@@ -37,6 +37,9 @@ node app.js
 # install the graphql-cli
 yarn global add graphql-cli
 
+# install prisma
+yarn global add prisma
+
 # navigate to the server directory
 cd graphqlService
 
@@ -51,7 +54,7 @@ node src/index.js
 
 ```sh
 # navigate to the server directory in a separate terminal
-cd server
+cd graphqlService
 
 # run script
 graphql playground
