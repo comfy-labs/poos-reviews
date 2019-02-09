@@ -13,6 +13,7 @@ import getLocation from "../../data/deviceRequest/location/getLocation";
 import {
   buildGPSButton,
   buildSearchThisAreaButton,
+  extractBounds,
   hasCurrentLocationChanged
 } from "./helpers";
 
@@ -40,7 +41,8 @@ class GoogleMap extends React.Component {
         }).isRequired
       })
     ).isRequired,
-    google: PropTypes.object
+    google: PropTypes.object,
+    onSearchButtonClick: PropTypes.func.isRequired
   };
 
   constructor() {
@@ -201,8 +203,8 @@ class GoogleMap extends React.Component {
   };
 
   handleSearchButtonClick = () => {
-    // get current bounds
-    // this.props.onSearchButtonClick && this.props.onSearchButtonClick();
+    const bounds = extractBounds(this.map.getBounds());
+    this.props.onSearchButtonClick(bounds);
     this.setState(state => ({ ...state, isShowingSearchButton: false }));
   };
 

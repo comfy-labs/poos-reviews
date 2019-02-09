@@ -61,6 +61,19 @@ export function buildSearchThisAreaButton(handleClick) {
   return controlDiv;
 }
 
+export function extractBounds(rawBounds) {
+  return {
+    ne: {
+      lat: rawBounds.getNorthEast().lat(),
+      lng: rawBounds.getNorthEast().lng()
+    },
+    sw: {
+      lat: rawBounds.getSouthWest().lat(),
+      lng: rawBounds.getSouthWest().lng()
+    }
+  };
+}
+
 export function hasCurrentLocationChanged(oldLocation, newLocation) {
   return (
     get(oldLocation, "lat") !== get(newLocation, "lat") ||

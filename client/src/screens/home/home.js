@@ -155,7 +155,6 @@ class Home extends React.Component {
       user: null,
       // google map state
       google: null,
-      locationConsent: false,
       // review state
       data: mockData // @todo: remove when real data can be populated
     };
@@ -193,6 +192,8 @@ class Home extends React.Component {
       return { ...state, google };
     });
   };
+
+  handleSearchButtonClick = () => {};
 
   handleSignUp = (name, email, password) => {
     signUp(name, email, password).then(payload => {
@@ -243,16 +244,6 @@ class Home extends React.Component {
       return {
         ...state,
         isWriteAReviewModalShowing: !state.isWriteAReviewModalShowing
-      };
-    });
-  };
-
-  userClickedThePoop = () => {
-    console.log("User clicked poop");
-    this.setState(state => {
-      return {
-        ...state,
-        locationConsent: true
       };
     });
   };
@@ -336,7 +327,7 @@ class Home extends React.Component {
             <GoogleMap
               data={this.state.data}
               google={this.state.google}
-              locationConsent={this.state.locationConsent}
+              onSearchButtonClick={this.handleSearchButtonClick}
             />
           </main>
         </div>
