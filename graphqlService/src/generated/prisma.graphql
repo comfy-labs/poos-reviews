@@ -1,5 +1,9 @@
 # source: https://us1.prisma.sh/michael-stromberg-2f6e83/database/dev
-# timestamp: Sat Nov 24 2018 19:58:37 GMT-0800 (Pacific Standard Time)
+# timestamp: Wed Feb 06 2019 18:18:34 GMT-0800 (Pacific Standard Time)
+
+type AggregatePlace {
+  count: Int!
+}
 
 type AggregateReview {
   count: Int!
@@ -28,20 +32,26 @@ scalar Long
 
 type Mutation {
   createReview(data: ReviewCreateInput!): Review!
+  createPlace(data: PlaceCreateInput!): Place!
   createUser(data: UserCreateInput!): User!
   createVote(data: VoteCreateInput!): Vote!
   updateReview(data: ReviewUpdateInput!, where: ReviewWhereUniqueInput!): Review
+  updatePlace(data: PlaceUpdateInput!, where: PlaceWhereUniqueInput!): Place
   updateUser(data: UserUpdateInput!, where: UserWhereUniqueInput!): User
   updateVote(data: VoteUpdateInput!, where: VoteWhereUniqueInput!): Vote
   deleteReview(where: ReviewWhereUniqueInput!): Review
+  deletePlace(where: PlaceWhereUniqueInput!): Place
   deleteUser(where: UserWhereUniqueInput!): User
   deleteVote(where: VoteWhereUniqueInput!): Vote
   upsertReview(where: ReviewWhereUniqueInput!, create: ReviewCreateInput!, update: ReviewUpdateInput!): Review!
+  upsertPlace(where: PlaceWhereUniqueInput!, create: PlaceCreateInput!, update: PlaceUpdateInput!): Place!
   upsertUser(where: UserWhereUniqueInput!, create: UserCreateInput!, update: UserUpdateInput!): User!
   upsertVote(where: VoteWhereUniqueInput!, create: VoteCreateInput!, update: VoteUpdateInput!): Vote!
   updateManyReviews(data: ReviewUpdateManyMutationInput!, where: ReviewWhereInput): BatchPayload!
+  updateManyPlaces(data: PlaceUpdateManyMutationInput!, where: PlaceWhereInput): BatchPayload!
   updateManyUsers(data: UserUpdateManyMutationInput!, where: UserWhereInput): BatchPayload!
   deleteManyReviews(where: ReviewWhereInput): BatchPayload!
+  deleteManyPlaces(where: PlaceWhereInput): BatchPayload!
   deleteManyUsers(where: UserWhereInput): BatchPayload!
   deleteManyVotes(where: VoteWhereInput): BatchPayload!
 }
@@ -73,14 +83,346 @@ type PageInfo {
   endCursor: String
 }
 
+type Place implements Node {
+  id: ID!
+  name: String!
+  lat: Float!
+  lng: Float!
+  placeId: ID!
+  reviews(where: ReviewWhereInput, orderBy: ReviewOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Review!]
+}
+
+"""A connection to a list of items."""
+type PlaceConnection {
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """A list of edges."""
+  edges: [PlaceEdge]!
+  aggregate: AggregatePlace!
+}
+
+input PlaceCreateInput {
+  name: String!
+  lat: Float!
+  lng: Float!
+  placeId: ID!
+  reviews: ReviewCreateManyWithoutPlaceInput
+}
+
+input PlaceCreateOneWithoutReviewsInput {
+  create: PlaceCreateWithoutReviewsInput
+  connect: PlaceWhereUniqueInput
+}
+
+input PlaceCreateWithoutReviewsInput {
+  name: String!
+  lat: Float!
+  lng: Float!
+  placeId: ID!
+}
+
+"""An edge in a connection."""
+type PlaceEdge {
+  """The item at the end of the edge."""
+  node: Place!
+
+  """A cursor for use in pagination."""
+  cursor: String!
+}
+
+enum PlaceOrderByInput {
+  id_ASC
+  id_DESC
+  name_ASC
+  name_DESC
+  lat_ASC
+  lat_DESC
+  lng_ASC
+  lng_DESC
+  placeId_ASC
+  placeId_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+  createdAt_ASC
+  createdAt_DESC
+}
+
+type PlacePreviousValues {
+  id: ID!
+  name: String!
+  lat: Float!
+  lng: Float!
+  placeId: ID!
+}
+
+type PlaceSubscriptionPayload {
+  mutation: MutationType!
+  node: Place
+  updatedFields: [String!]
+  previousValues: PlacePreviousValues
+}
+
+input PlaceSubscriptionWhereInput {
+  """Logical AND on all given filters."""
+  AND: [PlaceSubscriptionWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [PlaceSubscriptionWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [PlaceSubscriptionWhereInput!]
+
+  """
+  The subscription event gets dispatched when it's listed in mutation_in
+  """
+  mutation_in: [MutationType!]
+
+  """
+  The subscription event gets only dispatched when one of the updated fields names is included in this list
+  """
+  updatedFields_contains: String
+
+  """
+  The subscription event gets only dispatched when all of the field names included in this list have been updated
+  """
+  updatedFields_contains_every: [String!]
+
+  """
+  The subscription event gets only dispatched when some of the field names included in this list have been updated
+  """
+  updatedFields_contains_some: [String!]
+  node: PlaceWhereInput
+}
+
+input PlaceUpdateInput {
+  name: String
+  lat: Float
+  lng: Float
+  placeId: ID
+  reviews: ReviewUpdateManyWithoutPlaceInput
+}
+
+input PlaceUpdateManyMutationInput {
+  name: String
+  lat: Float
+  lng: Float
+  placeId: ID
+}
+
+input PlaceUpdateOneRequiredWithoutReviewsInput {
+  create: PlaceCreateWithoutReviewsInput
+  connect: PlaceWhereUniqueInput
+  update: PlaceUpdateWithoutReviewsDataInput
+  upsert: PlaceUpsertWithoutReviewsInput
+}
+
+input PlaceUpdateWithoutReviewsDataInput {
+  name: String
+  lat: Float
+  lng: Float
+  placeId: ID
+}
+
+input PlaceUpsertWithoutReviewsInput {
+  update: PlaceUpdateWithoutReviewsDataInput!
+  create: PlaceCreateWithoutReviewsInput!
+}
+
+input PlaceWhereInput {
+  """Logical AND on all given filters."""
+  AND: [PlaceWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [PlaceWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [PlaceWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  name: String
+
+  """All values that are not equal to given value."""
+  name_not: String
+
+  """All values that are contained in given list."""
+  name_in: [String!]
+
+  """All values that are not contained in given list."""
+  name_not_in: [String!]
+
+  """All values less than the given value."""
+  name_lt: String
+
+  """All values less than or equal the given value."""
+  name_lte: String
+
+  """All values greater than the given value."""
+  name_gt: String
+
+  """All values greater than or equal the given value."""
+  name_gte: String
+
+  """All values containing the given string."""
+  name_contains: String
+
+  """All values not containing the given string."""
+  name_not_contains: String
+
+  """All values starting with the given string."""
+  name_starts_with: String
+
+  """All values not starting with the given string."""
+  name_not_starts_with: String
+
+  """All values ending with the given string."""
+  name_ends_with: String
+
+  """All values not ending with the given string."""
+  name_not_ends_with: String
+  lat: Float
+
+  """All values that are not equal to given value."""
+  lat_not: Float
+
+  """All values that are contained in given list."""
+  lat_in: [Float!]
+
+  """All values that are not contained in given list."""
+  lat_not_in: [Float!]
+
+  """All values less than the given value."""
+  lat_lt: Float
+
+  """All values less than or equal the given value."""
+  lat_lte: Float
+
+  """All values greater than the given value."""
+  lat_gt: Float
+
+  """All values greater than or equal the given value."""
+  lat_gte: Float
+  lng: Float
+
+  """All values that are not equal to given value."""
+  lng_not: Float
+
+  """All values that are contained in given list."""
+  lng_in: [Float!]
+
+  """All values that are not contained in given list."""
+  lng_not_in: [Float!]
+
+  """All values less than the given value."""
+  lng_lt: Float
+
+  """All values less than or equal the given value."""
+  lng_lte: Float
+
+  """All values greater than the given value."""
+  lng_gt: Float
+
+  """All values greater than or equal the given value."""
+  lng_gte: Float
+  placeId: ID
+
+  """All values that are not equal to given value."""
+  placeId_not: ID
+
+  """All values that are contained in given list."""
+  placeId_in: [ID!]
+
+  """All values that are not contained in given list."""
+  placeId_not_in: [ID!]
+
+  """All values less than the given value."""
+  placeId_lt: ID
+
+  """All values less than or equal the given value."""
+  placeId_lte: ID
+
+  """All values greater than the given value."""
+  placeId_gt: ID
+
+  """All values greater than or equal the given value."""
+  placeId_gte: ID
+
+  """All values containing the given string."""
+  placeId_contains: ID
+
+  """All values not containing the given string."""
+  placeId_not_contains: ID
+
+  """All values starting with the given string."""
+  placeId_starts_with: ID
+
+  """All values not starting with the given string."""
+  placeId_not_starts_with: ID
+
+  """All values ending with the given string."""
+  placeId_ends_with: ID
+
+  """All values not ending with the given string."""
+  placeId_not_ends_with: ID
+  reviews_every: ReviewWhereInput
+  reviews_some: ReviewWhereInput
+  reviews_none: ReviewWhereInput
+}
+
+input PlaceWhereUniqueInput {
+  id: ID
+  placeId: ID
+}
+
 type Query {
   reviews(where: ReviewWhereInput, orderBy: ReviewOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Review]!
+  places(where: PlaceWhereInput, orderBy: PlaceOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Place]!
   users(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [User]!
   votes(where: VoteWhereInput, orderBy: VoteOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Vote]!
   review(where: ReviewWhereUniqueInput!): Review
+  place(where: PlaceWhereUniqueInput!): Place
   user(where: UserWhereUniqueInput!): User
   vote(where: VoteWhereUniqueInput!): Vote
   reviewsConnection(where: ReviewWhereInput, orderBy: ReviewOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ReviewConnection!
+  placesConnection(where: PlaceWhereInput, orderBy: PlaceOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): PlaceConnection!
   usersConnection(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): UserConnection!
   votesConnection(where: VoteWhereInput, orderBy: VoteOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): VoteConnection!
 
@@ -96,10 +438,8 @@ type Review implements Node {
   createdAt: DateTime!
   accessibility: String!
   cleanliness: Int!
-  locationLat: Float!
-  locationLng: Float!
-  locationPlaceId: String!
   numStalls: Int!
+  place: Place!
   privacy: Int!
   rating: Int!
   reviewText: String!
@@ -121,16 +461,19 @@ type ReviewConnection {
 input ReviewCreateInput {
   accessibility: String!
   cleanliness: Int!
-  locationLat: Float!
-  locationLng: Float!
-  locationPlaceId: String!
   numStalls: Int!
   privacy: Int!
   rating: Int!
   reviewText: String!
   tpQuality: Int!
+  place: PlaceCreateOneWithoutReviewsInput!
   postedBy: UserCreateOneWithoutReviewsInput!
   votes: VoteCreateManyWithoutReviewInput
+}
+
+input ReviewCreateManyWithoutPlaceInput {
+  create: [ReviewCreateWithoutPlaceInput!]
+  connect: [ReviewWhereUniqueInput!]
 }
 
 input ReviewCreateManyWithoutPostedByInput {
@@ -143,31 +486,39 @@ input ReviewCreateOneWithoutVotesInput {
   connect: ReviewWhereUniqueInput
 }
 
-input ReviewCreateWithoutPostedByInput {
+input ReviewCreateWithoutPlaceInput {
   accessibility: String!
   cleanliness: Int!
-  locationLat: Float!
-  locationLng: Float!
-  locationPlaceId: String!
   numStalls: Int!
   privacy: Int!
   rating: Int!
   reviewText: String!
   tpQuality: Int!
+  postedBy: UserCreateOneWithoutReviewsInput!
+  votes: VoteCreateManyWithoutReviewInput
+}
+
+input ReviewCreateWithoutPostedByInput {
+  accessibility: String!
+  cleanliness: Int!
+  numStalls: Int!
+  privacy: Int!
+  rating: Int!
+  reviewText: String!
+  tpQuality: Int!
+  place: PlaceCreateOneWithoutReviewsInput!
   votes: VoteCreateManyWithoutReviewInput
 }
 
 input ReviewCreateWithoutVotesInput {
   accessibility: String!
   cleanliness: Int!
-  locationLat: Float!
-  locationLng: Float!
-  locationPlaceId: String!
   numStalls: Int!
   privacy: Int!
   rating: Int!
   reviewText: String!
   tpQuality: Int!
+  place: PlaceCreateOneWithoutReviewsInput!
   postedBy: UserCreateOneWithoutReviewsInput!
 }
 
@@ -189,12 +540,6 @@ enum ReviewOrderByInput {
   accessibility_DESC
   cleanliness_ASC
   cleanliness_DESC
-  locationLat_ASC
-  locationLat_DESC
-  locationLng_ASC
-  locationLng_DESC
-  locationPlaceId_ASC
-  locationPlaceId_DESC
   numStalls_ASC
   numStalls_DESC
   privacy_ASC
@@ -214,9 +559,6 @@ type ReviewPreviousValues {
   createdAt: DateTime!
   accessibility: String!
   cleanliness: Int!
-  locationLat: Float!
-  locationLng: Float!
-  locationPlaceId: String!
   numStalls: Int!
   privacy: Int!
   rating: Int!
@@ -357,90 +699,6 @@ input ReviewScalarWhereInput {
 
   """All values greater than or equal the given value."""
   cleanliness_gte: Int
-  locationLat: Float
-
-  """All values that are not equal to given value."""
-  locationLat_not: Float
-
-  """All values that are contained in given list."""
-  locationLat_in: [Float!]
-
-  """All values that are not contained in given list."""
-  locationLat_not_in: [Float!]
-
-  """All values less than the given value."""
-  locationLat_lt: Float
-
-  """All values less than or equal the given value."""
-  locationLat_lte: Float
-
-  """All values greater than the given value."""
-  locationLat_gt: Float
-
-  """All values greater than or equal the given value."""
-  locationLat_gte: Float
-  locationLng: Float
-
-  """All values that are not equal to given value."""
-  locationLng_not: Float
-
-  """All values that are contained in given list."""
-  locationLng_in: [Float!]
-
-  """All values that are not contained in given list."""
-  locationLng_not_in: [Float!]
-
-  """All values less than the given value."""
-  locationLng_lt: Float
-
-  """All values less than or equal the given value."""
-  locationLng_lte: Float
-
-  """All values greater than the given value."""
-  locationLng_gt: Float
-
-  """All values greater than or equal the given value."""
-  locationLng_gte: Float
-  locationPlaceId: String
-
-  """All values that are not equal to given value."""
-  locationPlaceId_not: String
-
-  """All values that are contained in given list."""
-  locationPlaceId_in: [String!]
-
-  """All values that are not contained in given list."""
-  locationPlaceId_not_in: [String!]
-
-  """All values less than the given value."""
-  locationPlaceId_lt: String
-
-  """All values less than or equal the given value."""
-  locationPlaceId_lte: String
-
-  """All values greater than the given value."""
-  locationPlaceId_gt: String
-
-  """All values greater than or equal the given value."""
-  locationPlaceId_gte: String
-
-  """All values containing the given string."""
-  locationPlaceId_contains: String
-
-  """All values not containing the given string."""
-  locationPlaceId_not_contains: String
-
-  """All values starting with the given string."""
-  locationPlaceId_starts_with: String
-
-  """All values not starting with the given string."""
-  locationPlaceId_not_starts_with: String
-
-  """All values ending with the given string."""
-  locationPlaceId_ends_with: String
-
-  """All values not ending with the given string."""
-  locationPlaceId_not_ends_with: String
   numStalls: Int
 
   """All values that are not equal to given value."""
@@ -613,14 +871,12 @@ input ReviewSubscriptionWhereInput {
 input ReviewUpdateInput {
   accessibility: String
   cleanliness: Int
-  locationLat: Float
-  locationLng: Float
-  locationPlaceId: String
   numStalls: Int
   privacy: Int
   rating: Int
   reviewText: String
   tpQuality: Int
+  place: PlaceUpdateOneRequiredWithoutReviewsInput
   postedBy: UserUpdateOneRequiredWithoutReviewsInput
   votes: VoteUpdateManyWithoutReviewInput
 }
@@ -628,9 +884,6 @@ input ReviewUpdateInput {
 input ReviewUpdateManyDataInput {
   accessibility: String
   cleanliness: Int
-  locationLat: Float
-  locationLng: Float
-  locationPlaceId: String
   numStalls: Int
   privacy: Int
   rating: Int
@@ -641,9 +894,6 @@ input ReviewUpdateManyDataInput {
 input ReviewUpdateManyMutationInput {
   accessibility: String
   cleanliness: Int
-  locationLat: Float
-  locationLng: Float
-  locationPlaceId: String
   numStalls: Int
   privacy: Int
   rating: Int
@@ -651,9 +901,22 @@ input ReviewUpdateManyMutationInput {
   tpQuality: Int
 }
 
+input ReviewUpdateManyWithoutPlaceInput {
+  create: [ReviewCreateWithoutPlaceInput!]
+  connect: [ReviewWhereUniqueInput!]
+  set: [ReviewWhereUniqueInput!]
+  disconnect: [ReviewWhereUniqueInput!]
+  delete: [ReviewWhereUniqueInput!]
+  update: [ReviewUpdateWithWhereUniqueWithoutPlaceInput!]
+  updateMany: [ReviewUpdateManyWithWhereNestedInput!]
+  deleteMany: [ReviewScalarWhereInput!]
+  upsert: [ReviewUpsertWithWhereUniqueWithoutPlaceInput!]
+}
+
 input ReviewUpdateManyWithoutPostedByInput {
   create: [ReviewCreateWithoutPostedByInput!]
   connect: [ReviewWhereUniqueInput!]
+  set: [ReviewWhereUniqueInput!]
   disconnect: [ReviewWhereUniqueInput!]
   delete: [ReviewWhereUniqueInput!]
   update: [ReviewUpdateWithWhereUniqueWithoutPostedByInput!]
@@ -674,32 +937,45 @@ input ReviewUpdateOneRequiredWithoutVotesInput {
   upsert: ReviewUpsertWithoutVotesInput
 }
 
-input ReviewUpdateWithoutPostedByDataInput {
+input ReviewUpdateWithoutPlaceDataInput {
   accessibility: String
   cleanliness: Int
-  locationLat: Float
-  locationLng: Float
-  locationPlaceId: String
-  numStalls: Int
-  privacy: Int
-  rating: Int
-  reviewText: String
-  tpQuality: Int
-  votes: VoteUpdateManyWithoutReviewInput
-}
-
-input ReviewUpdateWithoutVotesDataInput {
-  accessibility: String
-  cleanliness: Int
-  locationLat: Float
-  locationLng: Float
-  locationPlaceId: String
   numStalls: Int
   privacy: Int
   rating: Int
   reviewText: String
   tpQuality: Int
   postedBy: UserUpdateOneRequiredWithoutReviewsInput
+  votes: VoteUpdateManyWithoutReviewInput
+}
+
+input ReviewUpdateWithoutPostedByDataInput {
+  accessibility: String
+  cleanliness: Int
+  numStalls: Int
+  privacy: Int
+  rating: Int
+  reviewText: String
+  tpQuality: Int
+  place: PlaceUpdateOneRequiredWithoutReviewsInput
+  votes: VoteUpdateManyWithoutReviewInput
+}
+
+input ReviewUpdateWithoutVotesDataInput {
+  accessibility: String
+  cleanliness: Int
+  numStalls: Int
+  privacy: Int
+  rating: Int
+  reviewText: String
+  tpQuality: Int
+  place: PlaceUpdateOneRequiredWithoutReviewsInput
+  postedBy: UserUpdateOneRequiredWithoutReviewsInput
+}
+
+input ReviewUpdateWithWhereUniqueWithoutPlaceInput {
+  where: ReviewWhereUniqueInput!
+  data: ReviewUpdateWithoutPlaceDataInput!
 }
 
 input ReviewUpdateWithWhereUniqueWithoutPostedByInput {
@@ -710,6 +986,12 @@ input ReviewUpdateWithWhereUniqueWithoutPostedByInput {
 input ReviewUpsertWithoutVotesInput {
   update: ReviewUpdateWithoutVotesDataInput!
   create: ReviewCreateWithoutVotesInput!
+}
+
+input ReviewUpsertWithWhereUniqueWithoutPlaceInput {
+  where: ReviewWhereUniqueInput!
+  update: ReviewUpdateWithoutPlaceDataInput!
+  create: ReviewCreateWithoutPlaceInput!
 }
 
 input ReviewUpsertWithWhereUniqueWithoutPostedByInput {
@@ -851,90 +1133,6 @@ input ReviewWhereInput {
 
   """All values greater than or equal the given value."""
   cleanliness_gte: Int
-  locationLat: Float
-
-  """All values that are not equal to given value."""
-  locationLat_not: Float
-
-  """All values that are contained in given list."""
-  locationLat_in: [Float!]
-
-  """All values that are not contained in given list."""
-  locationLat_not_in: [Float!]
-
-  """All values less than the given value."""
-  locationLat_lt: Float
-
-  """All values less than or equal the given value."""
-  locationLat_lte: Float
-
-  """All values greater than the given value."""
-  locationLat_gt: Float
-
-  """All values greater than or equal the given value."""
-  locationLat_gte: Float
-  locationLng: Float
-
-  """All values that are not equal to given value."""
-  locationLng_not: Float
-
-  """All values that are contained in given list."""
-  locationLng_in: [Float!]
-
-  """All values that are not contained in given list."""
-  locationLng_not_in: [Float!]
-
-  """All values less than the given value."""
-  locationLng_lt: Float
-
-  """All values less than or equal the given value."""
-  locationLng_lte: Float
-
-  """All values greater than the given value."""
-  locationLng_gt: Float
-
-  """All values greater than or equal the given value."""
-  locationLng_gte: Float
-  locationPlaceId: String
-
-  """All values that are not equal to given value."""
-  locationPlaceId_not: String
-
-  """All values that are contained in given list."""
-  locationPlaceId_in: [String!]
-
-  """All values that are not contained in given list."""
-  locationPlaceId_not_in: [String!]
-
-  """All values less than the given value."""
-  locationPlaceId_lt: String
-
-  """All values less than or equal the given value."""
-  locationPlaceId_lte: String
-
-  """All values greater than the given value."""
-  locationPlaceId_gt: String
-
-  """All values greater than or equal the given value."""
-  locationPlaceId_gte: String
-
-  """All values containing the given string."""
-  locationPlaceId_contains: String
-
-  """All values not containing the given string."""
-  locationPlaceId_not_contains: String
-
-  """All values starting with the given string."""
-  locationPlaceId_starts_with: String
-
-  """All values not starting with the given string."""
-  locationPlaceId_not_starts_with: String
-
-  """All values ending with the given string."""
-  locationPlaceId_ends_with: String
-
-  """All values not ending with the given string."""
-  locationPlaceId_not_ends_with: String
   numStalls: Int
 
   """All values that are not equal to given value."""
@@ -1063,6 +1261,7 @@ input ReviewWhereInput {
 
   """All values greater than or equal the given value."""
   tpQuality_gte: Int
+  place: PlaceWhereInput
   postedBy: UserWhereInput
   votes_every: VoteWhereInput
   votes_some: VoteWhereInput
@@ -1075,6 +1274,7 @@ input ReviewWhereUniqueInput {
 
 type Subscription {
   review(where: ReviewSubscriptionWhereInput): ReviewSubscriptionPayload
+  place(where: PlaceSubscriptionWhereInput): PlaceSubscriptionPayload
   user(where: UserSubscriptionWhereInput): UserSubscriptionPayload
   vote(where: VoteSubscriptionWhereInput): VoteSubscriptionPayload
 }
@@ -1593,6 +1793,7 @@ input VoteUpdateInput {
 input VoteUpdateManyWithoutReviewInput {
   create: [VoteCreateWithoutReviewInput!]
   connect: [VoteWhereUniqueInput!]
+  set: [VoteWhereUniqueInput!]
   disconnect: [VoteWhereUniqueInput!]
   delete: [VoteWhereUniqueInput!]
   update: [VoteUpdateWithWhereUniqueWithoutReviewInput!]
@@ -1603,6 +1804,7 @@ input VoteUpdateManyWithoutReviewInput {
 input VoteUpdateManyWithoutUserInput {
   create: [VoteCreateWithoutUserInput!]
   connect: [VoteWhereUniqueInput!]
+  set: [VoteWhereUniqueInput!]
   disconnect: [VoteWhereUniqueInput!]
   delete: [VoteWhereUniqueInput!]
   update: [VoteUpdateWithWhereUniqueWithoutUserInput!]

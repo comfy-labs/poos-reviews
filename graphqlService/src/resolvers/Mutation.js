@@ -36,17 +36,27 @@ async function login(parent, args, context, info) {
   return { token, user };
 }
 
-function post(parent, args, context, info) {
+async function post(parent, args, context, info) {
   const userId = getUserId(context);
+  const placeExists = await context.db.exists.Place({
+    placeId: args.place.placeId
+  });
+  const place = placeExists ? {
+    placeId: args.place.placeId
+  } : {
+    name: args.place.name,
+    lat: args.place.lat,
+    lng: args.place.lng,
+    placeId: args.place.placeId
+  };
+
   return context.db.mutation.createReview(
     {
       data: {
         accessibility: args.accessibility,
         cleanliness: args.cleanliness,
-        locationLat: args.locationLat,
-        locationLng: args.locationLng,
-        locationPlaceId: args.locationPlaceId,
         numStalls: args.numStalls,
+        place,
         privacy: args.privacy,
         rating: args.rating,
         reviewText: args.reviewText,

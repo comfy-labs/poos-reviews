@@ -1,38 +1,57 @@
-# import Review, ReviewSubscriptionPayload, Vote, VoteSubscriptionPayload, ReviewOrderByInput from "./generated/prisma.graphql"
+# import Place, PlaceOrderByInput, Review, ReviewOrderByInput, ReviewSubscriptionPayload, Vote, VoteSubscriptionPayload from "./generated/prisma.graphql"
 
-input Filter {
+# QUERY: TYPE DEFINITION
+
+type Query {
+  info: String!
+  feed(
+    filter: FeedFilterInput
+    skip: Int
+    first: Int
+    orderBy: ReviewOrderByInput
+  ): Feed!
+  places(
+    filter: PlaceFilterInput
+    skip: Int
+    first: Int
+    orderBy: PlaceOrderByInput
+  ): Places!
+}
+
+# QUERY: INPUT DEFINITIONS
+
+input FeedFilterInput {
   accessibility: String
   cleanliness: Int
-  locationPlaceId: String
   numStalls: Int
+  place: FeedPlaceInput
   privacy: Int
   rating: Int
   tpQuality: Int
   user: UserInput
 }
 
+input FeedPlaceInput {
+  placeId: ID
+}
+
+input PlaceFilterInput {
+  placeId: ID
+  bounds: BoundsInput
+}
+
 input UserInput {
   id: String
 }
 
-type Query {
-  info: String!
-  feed(
-    filter: Filter
-    skip: Int
-    first: Int
-    orderBy: ReviewOrderByInput
-  ): Feed!
-}
+# MUTATION: TYPE DEFINITION
 
 type Mutation {
   post(
     accessibility: String!
     cleanliness: Int!
-    locationLat: Float!
-    locationLng: Float!
-    locationPlaceId: String!
     numStalls: Int!
+    place: PostPlaceInput!
     privacy: Int!
     rating: Int!
     reviewText: String!
@@ -41,6 +60,28 @@ type Mutation {
   signup(email: String!, password: String!, name: String!): AuthPayload
   login(email: String!, password: String!): AuthPayload
   vote(reviewId: ID!): Vote
+}
+
+input NorthEastInput {
+  lat: String!
+  lng: String!
+}
+
+input SouthWestInput {
+  lat: String!
+  lng: String!
+}
+
+input BoundsInput {
+  ne: NorthEastInput!
+  sw: SouthWestInput!
+}
+
+input PostPlaceInput {
+  name: String!
+  lat: Float!
+  lng: Float!
+  placeId: ID!
 }
 
 type Subscription {
@@ -56,6 +97,10 @@ type AuthPayload {
 type Feed {
   reviews: [Review!]!
   count: Int!
+}
+
+type Places {
+  places: [Place!]!
 }
 
 type User {

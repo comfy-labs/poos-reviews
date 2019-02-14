@@ -3,16 +3,23 @@ type Review {
   createdAt: DateTime!
   accessibility: String!
   cleanliness: Int!
-  locationLat: Float!
-  locationLng: Float!
-  locationPlaceId: String!
   numStalls: Int!
+  place: Place!
   privacy: Int!
   rating: Int!
   reviewText: String!
   tpQuality: Int!
   postedBy: User!
   votes: [Vote!]!
+}
+
+type Place {
+  id: ID! @unique
+  name: String!
+  lat: Float!
+  lng: Float!
+  placeId: ID! @unique
+  reviews: [Review!]!
 }
 
 type User {
