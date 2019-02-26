@@ -1,10 +1,18 @@
 import React from "react";
 import PropTypes from "prop-types";
 import ReactDOM from "react-dom";
+import debounce from "lodash/debounce";
 import MarkerClusterer from "@google/markerclusterer/src/markerclusterer";
 // material-ui
+import ClickAwayListener from "@material-ui/core/ClickAwayListener";
+import Grow from "@material-ui/core/Grow";
 import LinearProgress from "@material-ui/core/LinearProgress";
+import MenuItem from "@material-ui/core/MenuItem";
+import MenuList from "@material-ui/core/MenuList";
 import Paper from "@material-ui/core/Paper";
+import Popper from "@material-ui/core/Popper";
+import TextField from "@material-ui/core/TextField";
+import Typography from "@material-ui/core/Typography";
 import { withStyles } from "@material-ui/core/styles";
 // custom
 import blueDot from "../../../blue-dot.png";
@@ -14,7 +22,7 @@ import {
   buildGPSButton,
   buildSearchThisAreaButton,
   extractBounds,
-  hasCurrentLocationChanged
+  hasLocationChanged
 } from "./helpers";
 
 // material-ui css-in-js hoc argument
@@ -27,6 +35,9 @@ const styles = theme => ({
     marginBottom: theme.spacing.unit * 4,
     position: "relative",
     width: "100%"
+  },
+  popper: {
+    zIndex: 2
   }
 });
 
@@ -41,20 +52,30 @@ class GoogleMap extends React.Component {
         }).isRequired
       })
     ).isRequired,
+    defaultLocation: PropTypes.shape({
+      label: PropTypes.string.isRequired,
+      lat: PropTypes.number.isRequired,
+      lng: PropTypes.number.isRequired,
+      placeId: PropTypes.string.isRequired
+    }),
     google: PropTypes.object,
     onSearchButtonClick: PropTypes.func.isRequired
   };
 
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
+    this.debouncedGetPlacePredictions = debounce(this.getPlacePredictions, 300);
     this.map = null;
     this.state = {
       currentLocation: { lat: 37.774929, lng: -122.419418 }, // default to san francisco ¯\_(ツ)_/¯
       currentLocationErrors: null,
       haveBoundsChanged: false,
       isLoading: true,
+      isLocationDropdownOpen: false,
       isMapInitialized: false,
-      isShowingSearchButton: false
+      isShowingSearchButton: false,
+      locationDropdownOptions: [],
+      selectedLocation: props.defaultLocation || { label: "", value: null }
     };
   }
 
@@ -70,12 +91,20 @@ class GoogleMap extends React.Component {
     // update current location marker
     if (
       this.map &&
-      hasCurrentLocationChanged(
-        prevState.currentLocation,
-        this.state.currentLocation
-      )
+      hasLocationChanged(prevState.currentLocation, this.state.currentLocation)
     ) {
       this.buildCurrentLocationMarker();
+    }
+
+    // update selected location marker
+    if (
+      this.map &&
+      hasLocationChanged(
+        prevState.selectedLocation.value,
+        this.state.selectedLocation.value
+      )
+    ) {
+      this.buildSelectedLocationMarker();
     }
 
     // update data markers
@@ -96,19 +125,44 @@ class GoogleMap extends React.Component {
   }
 
   buildCurrentLocationMarker = () => {
+    if (this.currentLocationMarker) {
+      // remove old marker
+      this.currentLocationMarker.setMap(null);
+    }
+
     // build new marker
     const { Marker } = this.props.google.maps;
-    const marker = new Marker({
+    this.currentLocationMarker = new Marker({
       icon: blueDot,
       position: this.state.currentLocation,
       title: "Current Location"
     });
 
     // set marker on map
-    marker.setMap(this.map);
+    this.currentLocationMarker.setMap(this.map);
 
     // center the map on the new marker
     this.map.panTo(this.state.currentLocation);
+  };
+
+  buildSelectedLocationMarker = () => {
+    if (this.selectedLocationMarker) {
+      // remove old marker
+      this.selectedLocationMarker.setMap(null);
+    }
+
+    // build new marker
+    const { Marker } = this.props.google.maps;
+    this.selectedLocationMarker = new Marker({
+      position: this.state.currentLocation,
+      title: "Selected Location"
+    });
+
+    // set marker on map
+    this.selectedLocationMarker.setMap(this.map);
+
+    // center the map on the new marker
+    this.map.panTo(this.state.selectedLocation.value);
   };
 
   buildMap = () => {
@@ -164,6 +218,36 @@ class GoogleMap extends React.Component {
     /* eslint-enable no-unused-vars */
   };
 
+  getGeocodeFromPlaceId = placeId => {
+    return new Promise((resolve, reject) => {
+      this.geocoder.geocode({ placeId }, (results, status) => {
+        resolve(results[0].geometry.location);
+      });
+    });
+  };
+
+  getPlacePredictions = searchText => {
+    this.autocomplete.getPlacePredictions(
+      {
+        input: searchText,
+        types: ["establishment"]
+      },
+      (predictions, status) => {
+        if (predictions) {
+          this.setState(state => {
+            const locationDropdownOptions = predictions.map(prediction => {
+              return {
+                label: prediction.description,
+                value: prediction.place_id
+              };
+            });
+            return { ...state, locationDropdownOptions };
+          });
+        }
+      }
+    );
+  };
+
   handleBoundsChange = () => {
     if (!this.state.haveBoundsChanged && this.state.isMapInitialized) {
       this.setState(state => ({ ...state, haveBoundsChanged: true }));
@@ -198,6 +282,67 @@ class GoogleMap extends React.Component {
     }
   };
 
+  handleLocationSearchTextChange = event => {
+    const searchText = event.target.value;
+    this.setState(state => {
+      return {
+        ...state,
+        isLocationDropdownOpen: true,
+        selectedLocation: { ...state.selectedLocation, label: searchText }
+      };
+    });
+
+    if (searchText !== "") {
+      if (this.autocomplete) {
+        this.debouncedGetPlacePredictions(searchText);
+      } else {
+        const { AutocompleteService } = this.props.google.maps.places;
+        this.autocomplete = new AutocompleteService();
+        this.debouncedGetPlacePredictions(searchText);
+      }
+    }
+  };
+
+  handleLocationSelect = location => {
+    if (this.geocoder) {
+      this.getGeocodeFromPlaceId(location.value).then(geolocation => {
+        this.setState(state => {
+          return {
+            ...state,
+            isLocationDropdownOpen: false,
+            selectedLocation: {
+              label: location.label,
+              value: {
+                lat: geolocation.lat(),
+                lng: geolocation.lng(),
+                placeId: location.value
+              }
+            }
+          };
+        });
+      });
+    } else {
+      const { Geocoder } = this.props.google.maps;
+      this.geocoder = new Geocoder();
+      this.getGeocodeFromPlaceId(location.value).then(geolocation => {
+        this.setState(state => {
+          return {
+            ...state,
+            isLocationDropdownOpen: false,
+            selectedLocation: {
+              label: location.label,
+              value: {
+                lat: geolocation.lat(),
+                lng: geolocation.lng(),
+                placeId: location.value
+              }
+            }
+          };
+        });
+      });
+    }
+  };
+
   handleMapInitialize = () => {
     this.setState(state => ({ ...state, isMapInitialized: true }));
   };
@@ -208,7 +353,17 @@ class GoogleMap extends React.Component {
     this.setState(state => ({ ...state, isShowingSearchButton: false }));
   };
 
+  handleLocationDropdown = () => {
+    this.setState(state => {
+      return {
+        ...state,
+        isLocationDropdownOpen: !state.isLocationDropdownOpen
+      };
+    });
+  };
+
   render() {
+    const { classes, google } = this.props;
     const linearProgressStyle = {
       position: "absolute",
       top: 0,
@@ -223,12 +378,69 @@ class GoogleMap extends React.Component {
     };
 
     return (
-      <Paper className={this.props.classes.paper}>
-        <div style={linearProgressStyle}>
-          <LinearProgress />
+      <React.Fragment>
+        <div ref="location" style={{ height: 73 }}>
+          {google ? null : <LinearProgress />}
+          <TextField
+            disabled={!google}
+            fullWidth
+            id="location"
+            InputLabelProps={{ shrink: true }}
+            label="Search"
+            margin="normal"
+            onChange={this.handleLocationSearchTextChange}
+            value={this.state.selectedLocation.label}
+            variant="outlined"
+          />
         </div>
-        <div ref="map" style={mapStyle} />
-      </Paper>
+        {this.state.isLocationDropdownOpen ? (
+          <Popper
+            className={classes.popper}
+            open={this.state.isLocationDropdownOpen}
+            anchorEl={this.refs.location}
+            transition
+            disablePortal
+          >
+            {({ TransitionProps, placement }) => (
+              <Grow
+                {...TransitionProps}
+                id="menu-list-grow"
+                style={{
+                  transformOrigin:
+                    placement === "bottom" ? "center top" : "center bottom"
+                }}
+              >
+                <Paper style={{ width: this.refs.location.offsetWidth }}>
+                  <ClickAwayListener onClickAway={this.handleLocationDropdown}>
+                    <MenuList>
+                      {this.state.locationDropdownOptions.map(option => (
+                        <MenuItem
+                          key={option.value}
+                          onClick={() => {
+                            this.handleLocationSelect(option);
+                          }}
+                          style={{ overflow: "ellipsis" }}
+                          value={option.value}
+                        >
+                          <Typography noWrap variant="inherit">
+                            {option.label}
+                          </Typography>
+                        </MenuItem>
+                      ))}
+                    </MenuList>
+                  </ClickAwayListener>
+                </Paper>
+              </Grow>
+            )}
+          </Popper>
+        ) : null}
+        <Paper className={this.props.classes.paper}>
+          <div style={linearProgressStyle}>
+            <LinearProgress />
+          </div>
+          <div ref="map" style={mapStyle} />
+        </Paper>
+      </React.Fragment>
     );
   }
 }

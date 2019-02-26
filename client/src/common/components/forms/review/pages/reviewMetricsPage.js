@@ -8,8 +8,8 @@ import DialogActions from "@material-ui/core/DialogActions";
 import Grid from "@material-ui/core/Grid";
 import Grow from "@material-ui/core/Grow";
 import LinearProgress from "@material-ui/core/LinearProgress";
-import MenuList from "@material-ui/core/MenuList";
 import MenuItem from "@material-ui/core/MenuItem";
+import MenuList from "@material-ui/core/MenuList";
 import Paper from "@material-ui/core/Paper";
 import Popper from "@material-ui/core/Popper";
 import TextField from "@material-ui/core/TextField";
@@ -223,7 +223,7 @@ class ReviewMetricsPage extends React.Component {
     });
   };
 
-  handleToggleRatingDropdown = () => {
+  handleLocationDropdown = () => {
     this.setState(state => {
       return {
         ...state,
@@ -292,7 +292,7 @@ class ReviewMetricsPage extends React.Component {
                   >
                     <Paper style={{ width: this.refs.location.offsetWidth }}>
                       <ClickAwayListener
-                        onClickAway={this.handleToggleRatingDropdown}
+                        onClickAway={this.handleLocationDropdown}
                       >
                         <MenuList>
                           {this.state.locationDropdownOptions.map(option => (

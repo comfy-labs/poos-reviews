@@ -74,7 +74,7 @@ export function extractBounds(rawBounds) {
   };
 }
 
-export function hasCurrentLocationChanged(oldLocation, newLocation) {
+export function hasLocationChanged(oldLocation, newLocation) {
   return (
     get(oldLocation, "lat") !== get(newLocation, "lat") ||
     get(oldLocation, "lng") !== get(newLocation, "lng")
