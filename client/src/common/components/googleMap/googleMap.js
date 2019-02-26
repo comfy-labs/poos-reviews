@@ -154,7 +154,7 @@ class GoogleMap extends React.Component {
     // build new marker
     const { Marker } = this.props.google.maps;
     this.selectedLocationMarker = new Marker({
-      position: this.state.currentLocation,
+      position: this.state.selectedLocation.value,
       title: "Selected Location"
     });
 
@@ -380,7 +380,6 @@ class GoogleMap extends React.Component {
     return (
       <React.Fragment>
         <div ref="location" style={{ height: 73 }}>
-          {google ? null : <LinearProgress />}
           <TextField
             disabled={!google}
             fullWidth
