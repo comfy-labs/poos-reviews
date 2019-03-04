@@ -74,9 +74,9 @@ export function extractBounds(rawBounds) {
   };
 }
 
-export function hasLocationChanged(oldLocation, newLocation) {
+export function isSameLocation(oldLocation, newLocation) {
   return (
-    get(oldLocation, "lat") !== get(newLocation, "lat") ||
-    get(oldLocation, "lng") !== get(newLocation, "lng")
+    get(oldLocation, "lat") === get(newLocation, "lat") &&
+    get(oldLocation, "lng") === get(newLocation, "lng")
   );
 }

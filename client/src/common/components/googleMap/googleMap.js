@@ -22,7 +22,7 @@ import {
   buildGPSButton,
   buildSearchThisAreaButton,
   extractBounds,
-  hasLocationChanged
+  isSameLocation
 } from "./helpers";
 
 // material-ui css-in-js hoc argument
@@ -46,6 +46,7 @@ class GoogleMap extends React.Component {
     classes: PropTypes.object.isRequired,
     data: PropTypes.arrayOf(
       PropTypes.shape({
+        description: PropTypes.string.isRequired,
         location: PropTypes.shape({
           lat: PropTypes.number.isRequired,
           lng: PropTypes.number.isRequired
@@ -59,6 +60,7 @@ class GoogleMap extends React.Component {
       placeId: PropTypes.string.isRequired
     }),
     google: PropTypes.object,
+    onLocationIconClick: PropTypes.func.isRequired,
     onSearchButtonClick: PropTypes.func.isRequired
   };
 
@@ -80,47 +82,39 @@ class GoogleMap extends React.Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    // create Google Maps instance if google object is available
-    if (!this.map && this.props.google) {
-      this.buildMap();
-      this.setState(state => {
-        return { ...state, isLoading: false };
-      });
-    }
+    if (!this.map) {
+      if (this.props.google) {
+        // create Google Maps instance if google object is available and map not created yet
+        this.buildMap();
+        this.setState(state => {
+          return { ...state, isLoading: false };
+        });
+      }
+    } else {
+      // update current location marker
+      if (prevState.currentLocation !== this.state.currentLocation) {
+        this.buildCurrentLocationMarker();
+      }
 
-    // update current location marker
-    if (
-      this.map &&
-      hasLocationChanged(prevState.currentLocation, this.state.currentLocation)
-    ) {
-      this.buildCurrentLocationMarker();
-    }
+      if (
+        prevState.selectedLocation !== this.state.selectedLocation ||
+        prevProps.data !== this.props.data ||
+        prevState.isMapInitialized !== this.state.isMapInitialized
+      ) {
+        // update data markers
+        this.buildMarkers();
+      }
 
-    // update selected location marker
-    if (
-      this.map &&
-      hasLocationChanged(
-        prevState.selectedLocation.value,
-        this.state.selectedLocation.value
-      )
-    ) {
-      this.buildSelectedLocationMarker();
-    }
-
-    // update data markers
-    if (this.map) {
-      this.buildMarkers();
-    }
-
-    // update search button visibility
-    if (
-      this.searchButton &&
-      prevState.isShowingSearchButton !== this.state.isShowingSearchButton
-    ) {
-      this.searchButton.firstChild.style.visibility = this.state
-        .isShowingSearchButton
-        ? "visible"
-        : "hidden";
+      // update search button visibility
+      if (
+        this.searchButton &&
+        prevState.isShowingSearchButton !== this.state.isShowingSearchButton
+      ) {
+        this.searchButton.firstChild.style.visibility = this.state
+          .isShowingSearchButton
+          ? "visible"
+          : "hidden";
+      }
     }
   }
 
@@ -143,26 +137,6 @@ class GoogleMap extends React.Component {
 
     // center the map on the new marker
     this.map.panTo(this.state.currentLocation);
-  };
-
-  buildSelectedLocationMarker = () => {
-    if (this.selectedLocationMarker) {
-      // remove old marker
-      this.selectedLocationMarker.setMap(null);
-    }
-
-    // build new marker
-    const { Marker } = this.props.google.maps;
-    this.selectedLocationMarker = new Marker({
-      position: this.state.selectedLocation.value,
-      title: "Selected Location"
-    });
-
-    // set marker on map
-    this.selectedLocationMarker.setMap(this.map);
-
-    // center the map on the new marker
-    this.map.panTo(this.state.selectedLocation.value);
   };
 
   buildMap = () => {
@@ -205,17 +179,41 @@ class GoogleMap extends React.Component {
     };
   };
 
-  buildMarkers = () => {
+  buildMarker = ({ icon, position, title }) => {
     const { Marker } = this.props.google.maps;
-    const markers = this.props.data.map((review, i) => {
-      return new Marker({ icon: toilet, position: review.location });
+    return new Marker({ icon, position, title });
+  };
+
+  buildMarkers = () => {
+    // remove old markers
+    if (this.markerClusterer) {
+      this.markerClusterer.clearMarkers();
+    }
+
+    // build new markers
+    const markers = this.props.data.map((item, i) => {
+      const isSelectedLocation = isSameLocation(
+        item.location,
+        this.state.selectedLocation.value
+      );
+
+      // build marker
+      const marker = this.buildMarker({
+        icon: isSelectedLocation ? undefined : toilet,
+        position: item.location,
+        title: item.description
+      });
+
+      // add click event listener
+      marker.addListener("click", () => {
+        this.handleLocationIconClick(item);
+      });
+
+      return marker;
     });
 
-    /* eslint-disable no-unused-vars */
-    const markerCluster = new MarkerClusterer(this.map, markers, {
-      imagePath: "http://127.0.0.1:5000/images/toiletCluster/toiletCluster"
-    });
-    /* eslint-enable no-unused-vars */
+    // build markerClusterer
+    this.markerClusterer = new MarkerClusterer(this.map, markers, {});
   };
 
   getGeocodeFromPlaceId = placeId => {
@@ -303,44 +301,45 @@ class GoogleMap extends React.Component {
     }
   };
 
+  handleLocationIconClick = data => {
+    this.setState(
+      state => {
+        return {
+          ...state,
+          selectedLocation: {
+            label: data.description,
+            value: data.location
+          }
+        };
+      },
+      () => {
+        this.props.onLocationIconClick(data);
+      }
+    );
+  };
+
   handleLocationSelect = location => {
-    if (this.geocoder) {
-      this.getGeocodeFromPlaceId(location.value).then(geolocation => {
-        this.setState(state => {
-          return {
-            ...state,
-            isLocationDropdownOpen: false,
-            selectedLocation: {
-              label: location.label,
-              value: {
-                lat: geolocation.lat(),
-                lng: geolocation.lng(),
-                placeId: location.value
-              }
-            }
-          };
-        });
-      });
-    } else {
+    if (!this.geocoder) {
       const { Geocoder } = this.props.google.maps;
       this.geocoder = new Geocoder();
-      this.getGeocodeFromPlaceId(location.value).then(geolocation => {
-        this.setState(state => {
-          return {
-            ...state,
-            isLocationDropdownOpen: false,
-            selectedLocation: {
-              label: location.label,
-              value: {
-                lat: geolocation.lat(),
-                lng: geolocation.lng(),
-                placeId: location.value
-              }
-            }
-          };
-        });
-      });
     }
+
+    this.getGeocodeFromPlaceId(location.value).then(geolocation => {
+      this.setState(state => {
+        return {
+          ...state,
+          isLocationDropdownOpen: false,
+          selectedLocation: {
+            label: location.label,
+            value: {
+              lat: geolocation.lat(),
+              lng: geolocation.lng(),
+              placeId: location.value
+            }
+          }
+        };
+      });
+    });
   };
 
   handleMapInitialize = () => {

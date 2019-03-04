@@ -21,60 +21,70 @@ import signUp from "../../common/data/apiRequest/graphQLRequest/authentication/s
 // @todo: remove
 const mockData = [
   {
+    description: "Fake Location 1",
     location: {
       lat: 37.797667,
       lng: -122.429518
     }
   },
   {
+    description: "Fake Location 2",
     location: {
       lat: 37.7866,
       lng: -122.414149
     }
   },
   {
+    description: "Fake Location 3",
     location: {
       lat: 37.790941,
       lng: -122.450097
     }
   },
   {
+    description: "Fake Location 4",
     location: {
       lat: 37.805465,
       lng: -122.440243
     }
   },
   {
+    description: "Fake Location 5",
     location: {
       lat: 37.797056,
       lng: -122.400779
     }
   },
   {
+    description: "Fake Location 6",
     location: {
       lat: 37.780098,
       lng: -122.393572
     }
   },
   {
+    description: "Fake Location 7",
     location: {
       lat: 37.784033,
       lng: -122.420339
     }
   },
   {
+    description: "Fake Location 8",
     location: {
       lat: 37.774671,
       lng: -122.459633
     }
   },
   {
+    description: "Fake Location 9",
     location: {
       lat: 37.785389,
       lng: -122.434753
     }
   },
   {
+    description: "Fake Location 10",
     location: {
       lat: 37.803295,
       lng: -122.426688
@@ -191,6 +201,10 @@ class Home extends React.Component {
       const google = window.google;
       return { ...state, google };
     });
+  };
+
+  handleLocationButtonClick = data => {
+    console.log(data);
   };
 
   handleSearchButtonClick = () => {};
@@ -327,6 +341,7 @@ class Home extends React.Component {
             <GoogleMap
               data={this.state.data}
               google={this.state.google}
+              onLocationIconClick={this.handleLocationButtonClick}
               onSearchButtonClick={this.handleSearchButtonClick}
             />
           </main>
