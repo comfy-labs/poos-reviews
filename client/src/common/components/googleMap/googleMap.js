@@ -30,8 +30,9 @@ const styles = theme => ({
   linearProgress: {
     backgroundColor: "#b2dfdb"
   },
-  paper: {
-    height: 400,
+  map: {
+    height: "100%",
+    minHeight: 400,
     marginBottom: theme.spacing.unit * 4,
     position: "relative",
     width: "100%"
@@ -370,7 +371,8 @@ class GoogleMap extends React.Component {
       zIndex: this.state.isLoading ? 1 : 0
     };
     const mapStyle = {
-      height: 400,
+      height: "100%",
+      minHeight: 400,
       position: "absolute",
       top: 0,
       width: "100%"
@@ -432,7 +434,7 @@ class GoogleMap extends React.Component {
             )}
           </Popper>
         ) : null}
-        <Paper className={this.props.classes.paper}>
+        <Paper className={this.props.classes.map}>
           <div style={linearProgressStyle}>
             <LinearProgress />
           </div>
