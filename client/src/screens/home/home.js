@@ -183,27 +183,20 @@ class Home extends React.Component {
 
   handleSignUp = (name, email, password) => {
     signUp(name, email, password).then(payload => {
-      if (payload.errors) {
-        this.setState(state => {
-          return {
-            ...state,
-            authenticationErrors: payload.errors,
-            user: null
-          };
-        });
-      } else {
-        this.setState(state => {
-          return {
-            ...state,
-            isSignUpModalShowing: false,
-            authenticationErrors: payload.errors,
-            user: {
-              ...payload.login.user,
-              token: payload.login.token
-            }
-          };
-        });
-      }
+      this.setState(state => {
+        const hasErrors = !!payload.errors;
+        return {
+          ...state,
+          authenticationErrors: hasErrors ? payload.errors : false,
+          isSignUpModalShowing: hasErrors,
+          user: hasErrors
+            ? null
+            : {
+                ...payload.signup.user,
+                token: payload.signup.token
+              }
+        };
+      });
     });
   };
 
