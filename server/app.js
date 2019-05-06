@@ -45,14 +45,14 @@ app.set('view engine', 'ejs');
 // Public Folder
 app.use(express.static('./public'));
 
-app.get('/upload-dick-pics', (req, res) => {
+app.post('/upload-dick-pics', (req, res) => {
   res.render('upload');
   console.log('You did it!');
 })
   .get('/', (req, res) => {
     res.render('index');
     console.log("index again...");
-    });
+  });
 
 
 app.post('/upload', (req, res) => {
