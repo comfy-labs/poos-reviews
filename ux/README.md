@@ -1,6 +1,7 @@
 # Workflows
 1. [Log in](#login)
 2. [Sign up](#signup)
+3. [Map](#map)
 
 ### Log in
 - The Login Modal allows users to login.
@@ -41,6 +42,10 @@
 ```
 
 ### Sign up
+- The Signup Modal allows users to sign up.
+- Once signed up, a user is then logged in.
+- Logging in allows users to write reviews.
+- Without logging in, users are in read-only mode.
 
 ##### Signup Modal - Start
 ![Signup Modal - Start](./images/signup1.png "Signup Modal - Start")
@@ -75,3 +80,13 @@
     }
   }
 ```
+
+### Map
+
+##### Map - Landing
+- When a user lands on the homepage:
+  - the UI should render with a loading indicator placeholder for the map
+  - the UI should load San Francisco and default zoom
+  - a query should be sent to get relevant reviews for the bounding corner coordinates
+
+![Map - Landing](./images/map1.png "Map - Landing")

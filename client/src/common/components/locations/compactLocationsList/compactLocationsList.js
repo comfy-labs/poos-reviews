@@ -2,7 +2,6 @@ import React from "react";
 import PropTypes from "prop-types";
 // material-ui components
 import { withStyles } from "@material-ui/core/styles";
-import Avatar from "@material-ui/core/Avatar";
 import Divider from "@material-ui/core/Divider";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
@@ -11,24 +10,29 @@ import ListItemAvatar from "@material-ui/core/ListItemAvatar";
 import Paper from "@material-ui/core/Paper";
 import Typography from "@material-ui/core/Typography";
 
-function buildRow(review, classes) {
-  const { description, username } = review;
+import Rater from "../../rater/rater";
+
+function buildRow(location, classes) {
   return (
     <ListItem alignItems="flex-start">
       <ListItemAvatar>
-        <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" />
+        <Rater value={location.rating} max={5} readOnly />
       </ListItemAvatar>
       <ListItemText
         primary={
           <React.Fragment>
-            <Typography
-              component="span"
-              className={classes.inline}
-              color="textPrimary"
-            >
-              {username}
+            <Typography component="div" color="textPrimary" inline variant="h6">
+              {location.name}
             </Typography>
-            {description.slice(0, 100)}
+            <Typography
+              component="div"
+              color="textSecondary"
+              inline
+              noWrap
+              variant="h6"
+            >
+              {location.description.slice(0, 100)}
+            </Typography>
           </React.Fragment>
         }
       />
@@ -36,12 +40,12 @@ function buildRow(review, classes) {
   );
 }
 
-function buildRows(reviews, classes) {
-  return reviews.map((review, index) => {
+function buildRows(locations, classes) {
+  return locations.map((location, index) => {
     return (
       <div key={index}>
         {index === 0 ? <Divider /> : null}
-        {buildRow(review, classes)}
+        {buildRow(location, classes)}
         <Divider />
       </div>
     );
@@ -51,19 +55,21 @@ function buildRows(reviews, classes) {
 class CompactReviewsList extends React.Component {
   static propTypes = {
     classes: PropTypes.object.isRequired,
-    reviews: PropTypes.arrayOf(
+    locations: PropTypes.arrayOf(
       PropTypes.shape({
         description: PropTypes.string.isRequired,
-        username: PropTypes.string.isRequired
+        name: PropTypes.string.isRequired,
+        rating: PropTypes.number.isRequired
       })
     ).isRequired
   };
 
   render() {
-    const { classes, reviews } = this.props;
     return (
       <Paper>
-        <List className={classes.paper}>{buildRows(reviews, classes)}</List>
+        <List className={this.props.classes.paper}>
+          {buildRows(this.props.locations, this.props.classes)}
+        </List>
       </Paper>
     );
   }
