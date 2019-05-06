@@ -8,24 +8,41 @@ import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
 import { withStyles } from "@material-ui/core/styles";
 // custom components
-import CompactReviewsList from "../../common/components/reviews/compactReviewsList/compactReviewsList";
+import CompactLocationsList from "../../common/components/locations/compactLocationsList/compactLocationsList";
+import CompleteReviewModal from "../../common/components/reviews/completeReview/completeReview";
+import GoogleMap from "../../common/components/googleMap/googleMap";
 import LoginModal from "../../common/components/forms/authentication/loginModal";
 import SignUpModal from "../../common/components/forms/authentication/signUpModal";
 import WriteAReviewModal from "../../common/components/forms/review/writeAReviewModal";
-import GoogleMap from "../../common/components/googleMap/googleMap";
 // custom helpers
 import login from "../../common/data/apiRequest/graphQLRequest/authentication/login";
 import signUp from "../../common/data/apiRequest/graphQLRequest/authentication/signUp";
+import serverRequest from "../../common/data/apiRequest/serverRequest/serverRequest";
 
 // @todo: remove
-const mockData = [
+const mockCompleteReviewData = {
+  accessibility: "test",
+  cleanliness: "test",
+  description: "test",
+  image:
+    "https://kingfisher.scene7.com/is/image/Kingfisher/Category_Image_Bathroom_Suites?$PROMO_460_460$",
+  name: "test",
+  numStalls: "test",
+  privacy: "test",
+  rating: 4,
+  reviewText: "test",
+  tpQuality: 5
+};
+
+const mockLocations = [
   {
     description: "Fake Location 1",
     location: {
       lat: 37.797667,
       lng: -122.429518
     },
-    username: "Fake User 1"
+    name: "Fake Location Name 1",
+    rating: 3
   },
   {
     description: "Fake Location 2",
@@ -33,7 +50,8 @@ const mockData = [
       lat: 37.7866,
       lng: -122.414149
     },
-    username: "Fake User 2"
+    name: "Fake Location Name 2",
+    rating: 4
   },
   {
     description: "Fake Location 3",
@@ -41,7 +59,8 @@ const mockData = [
       lat: 37.790941,
       lng: -122.450097
     },
-    username: "Fake User 3"
+    name: "Fake Location Name 3",
+    rating: 5
   },
   {
     description: "Fake Location 4",
@@ -49,7 +68,8 @@ const mockData = [
       lat: 37.805465,
       lng: -122.440243
     },
-    username: "Fake User 4"
+    name: "Fake Location Name 4",
+    rating: 1
   },
   {
     description: "Fake Location 5",
@@ -57,7 +77,8 @@ const mockData = [
       lat: 37.797056,
       lng: -122.400779
     },
-    username: "Fake User 5"
+    name: "Fake Location Name 5",
+    rating: 3
   },
   {
     description: "Fake Location 6",
@@ -65,7 +86,8 @@ const mockData = [
       lat: 37.780098,
       lng: -122.393572
     },
-    username: "Fake User 6"
+    name: "Fake Location Name 6",
+    rating: 3
   },
   {
     description: "Fake Location 7",
@@ -73,7 +95,8 @@ const mockData = [
       lat: 37.784033,
       lng: -122.420339
     },
-    username: "Fake User 7"
+    name: "Fake Location Name 7",
+    rating: 2
   },
   {
     description: "Fake Location 8",
@@ -81,7 +104,8 @@ const mockData = [
       lat: 37.774671,
       lng: -122.459633
     },
-    username: "Fake User 8"
+    name: "Fake Location Name 8",
+    rating: 2
   },
   {
     description: "Fake Location 9",
@@ -89,7 +113,8 @@ const mockData = [
       lat: 37.785389,
       lng: -122.434753
     },
-    username: "Fake User 9"
+    name: "Fake Location Name 9",
+    rating: 5
   },
   {
     description: "Fake Location 10",
@@ -97,7 +122,8 @@ const mockData = [
       lat: 37.803295,
       lng: -122.426688
     },
-    username: "Fake User 10"
+    name: "Fake Location Name 10",
+    rating: 1
   }
 ];
 
@@ -136,6 +162,7 @@ class Home extends React.Component {
     super(props);
     this.state = {
       // modal state
+      isCompleteReviewModalShowing: false,
       isLoginModalShowing: false,
       isSignUpModalShowing: false,
       isWriteAReviewModalShowing: false,
@@ -145,7 +172,7 @@ class Home extends React.Component {
       // google map state
       google: null,
       // review state
-      data: mockData // @todo: remove when real data can be populated
+      data: mockLocations // @todo: remove when real data can be populated
     };
   }
 
@@ -166,6 +193,11 @@ class Home extends React.Component {
         };
       });
     });
+  };
+
+  handleSubmitImageClick = event => {
+    const imageFile = event.target.files[0];
+    serverRequest(imageFile);
   };
 
   handleScriptLoad = () => {
@@ -197,6 +229,15 @@ class Home extends React.Component {
               }
         };
       });
+    });
+  };
+
+  toggleCompleteReviewModalOpenState = () => {
+    this.setState(state => {
+      return {
+        ...state,
+        isCompleteReviewModalShowing: !state.isCompleteReviewModalShowing
+      };
     });
   };
 
@@ -275,10 +316,37 @@ class Home extends React.Component {
               onLocationIconClick={this.handleLocationButtonClick}
               onSearchButtonClick={this.handleSearchButtonClick}
             />
-            <CompactReviewsList reviews={mockData} />
+            <CompactLocationsList locations={this.state.data} />
+            <Button
+              variant="outlined"
+              size="small"
+              onClick={this.toggleCompleteReviewModalOpenState}
+            >
+              Open Demo Review
+            </Button>
+            <input
+              id="myInput"
+              ref="input"
+              type="file"
+              style={{ display: "none" }}
+              onChange={this.handleSubmitImageClick}
+            />
+            <Button
+              variant="contained"
+              onClick={() => {
+                this.refs.input.click();
+              }}
+            >
+              Submit an Image
+            </Button>
           </main>
         </div>
         {/* Modals */}
+        <CompleteReviewModal
+          data={mockCompleteReviewData}
+          isOpen={this.state.isCompleteReviewModalShowing}
+          onClose={this.toggleCompleteReviewModalOpenState}
+        />
         <LoginModal
           isOpen={this.state.isLoginModalShowing}
           onClose={this.toggleLoginModalOpenState}
