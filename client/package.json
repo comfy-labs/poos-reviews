@@ -1,0 +1,48 @@
+{
+  "name": "poos-reviews",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@google/markerclusterer": "^1.0.3",
+    "@material-ui/core": "^3.2.2",
+    "@material-ui/icons": "^3.0.1",
+    "axios": "^0.18.0",
+    "graphql-request": "^1.8.2",
+    "lodash": "^4.17.11",
+    "material-ui-search-bar": "^1.0.0-beta.13",
+    "react": "^16.5.2",
+    "react-dom": "^16.5.2",
+    "react-load-script": "0.0.6",
+    "react-markdown": "^4.0.3",
+    "react-scripts": "2.0.5"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "build:ghPages": "(if [ -d ../ghPages/build ]; then rm -r ../ghPages/build; fi;) && react-scripts build && mv build ../ghPages",
+    "build:server": "(if [ -d ../server/build ]; then rm -r ../server/build; fi;) && react-scripts build && mv build ../server",
+    "test": "CI=true react-scripts test --env=jsdom",
+    "eject": "react-scripts eject",
+    "deploy:ghPages": "yarn build:ghPages && gh-pages -d ../ghPages/build"
+  },
+  "eslintConfig": {
+    "extends": "react-app"
+  },
+  "browserslist": [
+    ">0.2%",
+    "not dead",
+    "not ie <= 11",
+    "not op_mini all"
+  ],
+  "devDependencies": {
+    "gh-pages": "^2.0.1",
+    "husky": "^1.2.0",
+    "prettier": "^1.14.3"
+  },
+  "homepage": "https://comfy-labs.github.io/poos-reviews",
+  "husky": {
+    "hooks": {
+      "pre-push": "yarn test"
+    }
+  }
+}

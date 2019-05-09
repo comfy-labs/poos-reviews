@@ -8,6 +8,11 @@ input Filter {
   privacy: Int
   rating: Int
   tpQuality: Int
+  user: UserInput
+}
+
+input UserInput {
+  id: String
 }
 
 type Query {

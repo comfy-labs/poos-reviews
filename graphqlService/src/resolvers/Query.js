@@ -2,6 +2,7 @@ async function feed(parent, args, context, info) {
   const { filter = {} } = args;
   const filters = [];
 
+  // review-based filters
   if (filter.accessibility) {
     filters.push({ accessibility_in: [filter.accessibility] });
   }
@@ -22,6 +23,10 @@ async function feed(parent, args, context, info) {
   }
   if (filter.tpQuality) {
     filters.push({ tpQuality_gte: filter.tpQuality });
+  }
+  // user-based filters
+  if (filter.user && filter.user.id) {
+    filters.push({ postedBy: { id: filter.user.id } });
   }
 
   const where = filters.length ? { OR: filters } : {};
