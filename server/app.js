@@ -1,91 +1,54 @@
 const express = require("express");
-const multer = require('multer');
-const ejs = require('ejs');
+const multer = require("multer");
 const path = require("path");
+const uuidv4 = require("uuid/v4");
 
 // Set The Storage Engine
 const storage = multer.diskStorage({
-  destination: './public/uploads/',
-  filename: function(req, file, cb){
-    cb(null,file.fieldname + '-' + Date.now() + path.extname(file.originalname));
+  destination: "./public/uploads/",
+  filename: function(req, file, cb) {
+    cb(null, `${uuidv4()}${path.extname(file.originalname)}`);
   }
 });
 
 // Init Upload
 const upload = multer({
   storage: storage,
-  limits:{fileSize: 1000000},
-  fileFilter: function(req, file, cb){
+  limits: { fileSize: 100000 },
+  fileFilter: function(req, file, cb) {
     checkFileType(file, cb);
   }
-}).single('myImage');
+}).single("image");
 
 // Check File Type
-function checkFileType(file, cb){
-  // Allowed ext
+function checkFileType(file, cb) {
   const filetypes = /jpeg|jpg|png|gif/;
-  // Check ext
   const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
-  // Check mime
   const mimetype = filetypes.test(file.mimetype);
 
-  if(mimetype && extname){
-    return cb(null,true);
-  } else {
-    cb('Error: Images Only!');
-  }
+  const error = mimetype && extname ? null : new Error("Error: Images Only!");
+  const passed = mimetype && extname;
+
+  cb(error, passed);
 }
 
 const app = express();
 const port = 5000;
 
-// EJS
-app.set('view engine', 'ejs');
-
-// Public Folder
-app.use(express.static('./public'));
-
-app.post('/upload-dick-pics', (req, res) => {
-  res.render('upload');
-  console.log('You did it!');
-})
-  .get('/', (req, res) => {
-    res.render('index');
-    console.log("index again...");
-  });
-
-
-app.post('/upload', (req, res) => {
-  upload(req, res, (err) => {
-    if(err){
-      res.render('index', {
-        msg: err
-      });
+app.post("/upload", (req, res) => {
+  upload(req, res, err => {
+    if (err) {
+      res.status(500).send({ error: err });
+    } else if (req.file === undefined) {
+      res.status(400).send({ error: "Error: No File Selected" });
     } else {
-      if(req.file == undefined){
-        res.render('index', {
-          msg: 'Error: No File Selected!'
-        });
-      } else {
-        res.render('index', {
-          msg: 'File Uploaded!',
-          file: `uploads/${req.file.filename}`
-        });
-      }
+      res.status(200).send({
+        message: "File Uploaded",
+        file: `uploads/${req.file.filename}`
+      });
     }
   });
 });
-
-
-
-// handle route to server toilet clusters
-app.get("/images/toiletCluster/:imageName", (req, res) => {
-  const imageName = req.params.imageName;
-  res.sendFile(`images/toiletCluster/${imageName}`, { root: __dirname });
-});
-
-
-// app.use(express.static(path.join(__dirname, "build")));
 
 // start server
 app.listen(port, () => console.log(`Poos app listening on port ${port}!`));
