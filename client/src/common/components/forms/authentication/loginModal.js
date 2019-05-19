@@ -4,6 +4,7 @@ import PropTypes from "prop-types";
 // material-ui imports
 import Button from "@material-ui/core/Button";
 import Checkbox from "@material-ui/core/Checkbox";
+import CircularProgress from "@material-ui/core/CircularProgress";
 import Dialog from "@material-ui/core/Dialog";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogTitle from "@material-ui/core/DialogTitle";
@@ -116,7 +117,11 @@ class LoginModal extends React.Component {
                 disabled={!this.validateSubmission(email, password)}
                 onClick={this.handleSubmit}
               >
-                Sign in
+                {this.props.isLoading ? (
+                  <CircularProgress color="secondary" size={14} thickness={8} />
+                ) : (
+                  "Sign in"
+                )}
               </Button>
             </div>
           </main>
@@ -128,6 +133,7 @@ class LoginModal extends React.Component {
 
 LoginModal.propTypes = {
   classes: PropTypes.object.isRequired,
+  isLoading: PropTypes.bool.isRequired,
   isOpen: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired
 };

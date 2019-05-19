@@ -164,6 +164,7 @@ class Home extends React.Component {
     this.state = {
       // modal state
       isCompleteReviewModalShowing: false,
+      isLoginModalLoading: false,
       isLoginModalShowing: false,
       isSignUpModalShowing: false,
       isWriteAReviewModalShowing: false,
@@ -178,22 +179,36 @@ class Home extends React.Component {
   }
 
   handleLogin = (email, password) => {
-    login(email, password).then(payload => {
-      const hasErrors = Boolean(payload.errors);
-      this.setState(state => {
-        return {
-          ...state,
-          authenticationErrors: hasErrors ? payload.errors : null,
-          isLoginModalShowing: hasErrors,
-          user: hasErrors
-            ? null
-            : {
-                ...payload.login.user,
-                token: payload.login.token
-              }
-        };
-      });
-    });
+    this.setState(
+      state => {
+        return { ...state, isLoginModalLoading: true };
+      },
+      () => {
+        login(email, password)
+          .then(payload => {
+            this.setState(state => {
+              return {
+                ...state,
+                authenticationErrors: null,
+                isLoginModalLoading: false,
+                isLoginModalShowing: false,
+                user: { ...payload.login.user, token: payload.login.token }
+              };
+            });
+          })
+          .catch(errors => {
+            this.setState(state => {
+              return {
+                ...state,
+                authenticationErrors: errors,
+                isLoginModalLoading: false,
+                isLoginModalShowing: true,
+                user: null
+              };
+            });
+          });
+      }
+    );
   };
 
   handleSubmitImageClick = event => {
@@ -361,6 +376,7 @@ class Home extends React.Component {
           onClose={this.toggleCompleteReviewModalOpenState}
         />
         <LoginModal
+          isLoading={this.state.isLoginModalLoading}
           isOpen={this.state.isLoginModalShowing}
           onClose={this.toggleLoginModalOpenState}
           onSubmit={this.handleLogin}

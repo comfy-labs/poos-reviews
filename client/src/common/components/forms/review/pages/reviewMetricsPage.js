@@ -72,8 +72,7 @@ class ReviewMetricsPage extends React.Component {
       value: PropTypes.string.isRequired
     }),
     onClose: PropTypes.func.isRequired,
-    goForward: PropTypes.func.isRequired,
-    onSavePageState: PropTypes.func.isRequired,
+    onNext: PropTypes.func.isRequired,
     previousState: PropTypes.object,
     token: PropTypes.string
   };
@@ -237,8 +236,7 @@ class ReviewMetricsPage extends React.Component {
   };
 
   handleNextClick = () => {
-    this.props.onSavePageState(this.state);
-    this.props.goForward();
+    this.props.onNext(this.state);
   };
 
   render() {
@@ -247,7 +245,7 @@ class ReviewMetricsPage extends React.Component {
     return (
       <React.Fragment>
         <Typography variant="h6" gutterBottom>
-          Write a Review
+          Write A Review
         </Typography>
         <Grid container spacing={24}>
           <Grid item xs={12}>

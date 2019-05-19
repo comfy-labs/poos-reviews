@@ -46,10 +46,9 @@ const styles = theme => {
 
 class ReviewUploadImagesPage extends React.Component {
   static propTypes = {
-    goBack: PropTypes.func.isRequired,
-    goForward: PropTypes.func.isRequired,
-    onSavePageState: PropTypes.func.isRequired,
-    classes: PropTypes.object.isRequired
+    classes: PropTypes.object.isRequired,
+    onBack: PropTypes.func.isRequired,
+    onNext: PropTypes.func.isRequired
   };
 
   constructor() {
@@ -58,13 +57,11 @@ class ReviewUploadImagesPage extends React.Component {
   }
 
   handleBackClick = () => {
-    this.props.onSavePageState(this.state);
-    this.props.goBack();
+    this.props.onBack(this.state);
   };
 
   handleNextClick = () => {
-    this.props.onSavePageState(this.state);
-    this.props.goForward();
+    this.props.onNext(this.state);
   };
 
   handleSubmitImageClick = event => {
