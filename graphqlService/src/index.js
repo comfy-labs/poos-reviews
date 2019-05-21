@@ -4,8 +4,8 @@ const { Prisma } = require("prisma-binding");
 const Query = require("./resolvers/Query");
 const Mutation = require("./resolvers/Mutation");
 const AuthPayload = require("./resolvers/AuthPayload");
-const Subscription = require("./resolvers/Subscription");
-const Feed = require("./resolvers/Feed");
+// const Subscription = require("./resolvers/Subscription");
+// const Feed = require("./resolvers/Feed");
 
 /*
  * The resolvers object is the actual implementation of the GraphQL schema.
@@ -16,8 +16,8 @@ const resolvers = {
   Query,
   Mutation,
   AuthPayload,
-  Subscription,
-  Feed
+  // Subscription,
+  // Feed
 };
 
 /*
@@ -32,7 +32,7 @@ const server = new GraphQLServer({
     ...req,
     db: new Prisma({
       typeDefs: "src/generated/prisma.graphql",
-      endpoint: "https://us1.prisma.sh/michael-stromberg-2f6e83/database/dev",
+      endpoint: "https://us1.prisma.sh/mark-dhillon-d38778/prisma-poop/dev",
       secret: "mysecret123",
       debug: true
     })

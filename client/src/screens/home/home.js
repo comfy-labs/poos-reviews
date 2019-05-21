@@ -18,6 +18,7 @@ import WriteAReviewModal from "../../common/components/forms/review/writeAReview
 import login from "../../common/data/apiRequest/graphQLRequest/authentication/login";
 import signUp from "../../common/data/apiRequest/graphQLRequest/authentication/signUp";
 import serverRequest from "../../common/data/apiRequest/serverRequest/serverRequest";
+import getAllShitholes from "../../common/data/apiRequest/graphQLRequest/shitholes/getAllShitholes";
 
 // @todo: remove
 const mockCompleteReviewData = {
@@ -207,6 +208,15 @@ class Home extends React.Component {
     });
   };
 
+  handleDbHit = function(event, more) {
+    console.log('You tryina hit the DB?');
+    console.log(event);
+    getAllShitholes().then(function(v){
+      console.log('dead homies.');
+      console.log(v);
+    });
+  };
+
   handleLocationButtonClick = data => {
     console.log(data);
   };
@@ -291,6 +301,9 @@ class Home extends React.Component {
           <Toolbar className={this.props.classes.toolbarSecondary}>
             <Button onClick={this.toggleWriteAReviewModal} size="small">
               Write a Review
+            </Button>
+            <Button onClick={this.handleDbHit} size="small">
+                Hit the DB
             </Button>
             <div>
               <Button

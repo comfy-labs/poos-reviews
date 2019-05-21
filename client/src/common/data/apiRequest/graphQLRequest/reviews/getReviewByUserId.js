@@ -1,7 +1,7 @@
 import graphQLRequest from "../graphQLRequest";
 
 // @todo: centralize this configuration
-const endpoint = "http://127.0.0.1:4000/";
+const endpoint = "https://app.prisma.io/mark-dhillon-d38778/services/prisma-us1/poos-reviews/dev/";
 
 export default function getReviewsByUserId(userId) {
   const requestOptions = {

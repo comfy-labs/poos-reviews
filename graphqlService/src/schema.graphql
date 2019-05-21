@@ -1,66 +1,62 @@
-# import Review, ReviewSubscriptionPayload, Vote, VoteSubscriptionPayload, ReviewOrderByInput from "./generated/prisma.graphql"
-
-input Filter {
-  accessibility: String
-  cleanliness: Int
-  locationPlaceId: String
-  numStalls: Int
-  privacy: Int
-  rating: Int
-  tpQuality: Int
-  user: UserInput
-}
-
-input UserInput {
-  id: String
-}
+scalar DateTime
 
 type Query {
-  info: String!
-  feed(
-    filter: Filter
-    skip: Int
-    first: Int
-    orderBy: ReviewOrderByInput
-  ): Feed!
+  getShitholes: [Shithole]
 }
 
 type Mutation {
-  post(
-    accessibility: String!
-    cleanliness: Int!
-    locationLat: Float!
-    locationLng: Float!
-    locationPlaceId: String!
-    numStalls: Int!
-    privacy: Int!
-    rating: Int!
-    reviewText: String!
-    tpQuality: Int!
-  ): Review!
-  signup(email: String!, password: String!, name: String!): AuthPayload
-  login(email: String!, password: String!): AuthPayload
-  vote(reviewId: ID!): Vote
-}
-
-type Subscription {
-  newReview: ReviewSubscriptionPayload
-  newVote: VoteSubscriptionPayload
+  addShithole(name: String!, address: String!, lat: Float!, lng: Float!): Shithole
 }
 
 type AuthPayload {
   token: String
-  user: User
+  user: Pooser
 }
 
-type Feed {
-  reviews: [Review!]!
-  count: Int!
-}
-
-type User {
+type Pooser {
   id: ID!
   name: String!
   email: String!
-  reviews: [Review!]!
+  password: String!
+  turdbits: [Turdbit!]!
+  updatedAt: DateTime!
+  createdAt: DateTime!
+}
+
+type Turdbit {
+  id: ID!
+  accessibility: Int
+  cleanliness: Int
+  stalls: Int
+  privacy: Int
+  text: String
+  tpQuality: Int
+  overall: Int!
+  author: Pooser
+  shithole: Shithole
+  updatedAt: DateTime!
+  createdAt: DateTime!
+}
+
+type Shithole {
+  id: ID!
+  lat: Float!
+  lng: Float!
+  name: String!
+  address: String!
+  turdbits: [Turdbit]
+  updatedAt: DateTime!
+  createdAt: DateTime!
+}
+
+type Shitpic {
+  id: ID!
+  url: String!
+  caption: String
+}
+
+type Link {
+  id: ID!
+  description: String!
+  url: String!
 }

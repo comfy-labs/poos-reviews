@@ -2,9 +2,15 @@ projects:
   app:
     schemaPath: src/schema.graphql
     extensions:
+      prisma: database/prisma.yml
+      codegen:
+        - generator: prisma-binding
+          language: graphql
+          output:
+            binding: src/generated/prisma.graphql
       endpoints:
         default: http://localhost:4000
-  database:
-    schemaPath: src/generated/prisma.graphql
-    extensions:
-      prisma: database/prisma.yml
+#  database:
+#    schemaPath: src/generated/prisma.graphql
+#    extensions:
+#      prisma: database/prisma.yml

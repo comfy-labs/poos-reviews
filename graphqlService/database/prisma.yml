@@ -1,6 +1,6 @@
 # The HTTP endpoint for your Prisma API
 #endpoint: ""
-endpoint: https://us1.prisma.sh/michael-stromberg-2f6e83/database/dev
+endpoint: https://us1.prisma.sh/mark-dhillon-d38778/prisma-poop/dev
 
 # Points to the file that holds your data model
 datamodel: datamodel.graphql
@@ -11,4 +11,5 @@ secret: mysecret123
 # Deploy hook
 hooks:
   post-deploy:
-    - graphql get-schema --project database
+    - graphql get-schema
+    - graphql codegen

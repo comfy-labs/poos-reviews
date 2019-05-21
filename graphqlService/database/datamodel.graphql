@@ -1,31 +1,45 @@
-type Review {
-  id: ID! @unique
-  createdAt: DateTime!
-  accessibility: String!
-  cleanliness: Int!
-  locationLat: Float!
-  locationLng: Float!
-  locationPlaceId: String!
-  numStalls: Int!
-  privacy: Int!
-  rating: Int!
-  reviewText: String!
-  tpQuality: Int!
-  postedBy: User!
-  votes: [Vote!]!
-}
-
-type User {
-  id: ID! @unique
+type Pooser {
+  id: ID! @unique @id
   name: String!
-  email: String! @unique
+  email: String @unique
   password: String!
-  reviews: [Review!]!
-  votes: [Vote!]!
+  turdbits: [Turdbit!]!
+  updatedAt: DateTime! @updatedAt
+  createdAt: DateTime! @createdAt
 }
 
-type Vote {
-  id: ID! @unique
-  review: Review!
-  user: User!
+type Turdbit {
+  id: ID! @unique @id
+  accessibility: Int
+  cleanliness: Int
+  stalls: Int
+  privacy: Int
+  text: String
+  tpQuality: Int
+  overall: Int!
+  author: Pooser
+  shithole: Shithole
+  updatedAt: DateTime! @updatedAt
+  createdAt: DateTime! @createdAt
 }
+
+type Shithole {
+  id: ID! @unique @id
+  lat: Float!
+  lng: Float!
+  name: String!
+  address: String!
+  turdbits: [Turdbit!]!
+  updatedAt: DateTime! @updatedAt
+  createdAt: DateTime! @createdAt
+}
+
+type Shitpic {
+  id: ID! @unique @id
+  url: String!
+  caption: String
+}
+
+
+
+

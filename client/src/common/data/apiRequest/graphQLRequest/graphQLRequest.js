@@ -51,10 +51,11 @@ export const graphQLRequestFields = {
     login: "login",
     post: "post",
     signup: "signup",
-    vote: "vote"
+    vote: "vote",
+    poop: "poop"
   },
   query: {
-    feed: "feed"
+    shitholes: "shitholes"
   },
   subscription: {
     newLink: "newLink", // @todo: rename once api is changed
