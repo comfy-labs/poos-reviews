@@ -1,6 +1,6 @@
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const { APP_SECRET, getUserId, sayPoop } = require("../utils");
+const { APP_SECRET, getUserId } = require("../utils");
 
 // async function signup(parent, args, context, info) {
 //   const password = await bcrypt.hash(args.password, 10);
@@ -81,4 +81,4 @@ const { APP_SECRET, getUserId, sayPoop } = require("../utils");
 //   );
 // }
 //
-// module.exports = { signup, login, post, vote, poop };
+// module.exports = { signup, login, post, vote };

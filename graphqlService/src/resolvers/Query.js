@@ -1,6 +1,4 @@
 
-const shitholes = /* ... */
-
 async function shitholes_resolver(parent, args, context, info) {
     return await context.db.query.shitholes();
 };

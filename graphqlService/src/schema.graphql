@@ -1,11 +1,11 @@
 scalar DateTime
 
 type Query {
-  getShitholes: [Shithole]
+  shitholes: [Shithole]
 }
 
 type Mutation {
-  addShithole(name: String!, address: String!, lat: Float!, lng: Float!): Shithole
+  createShithole(name: String!, address: String!, lat: Float!, lng: Float!): Shithole
 }
 
 type AuthPayload {
