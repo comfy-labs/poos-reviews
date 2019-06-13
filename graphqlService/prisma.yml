@@ -1,6 +1,0 @@
-endpoint: https://us1.prisma.sh/mark-dhillon-d38778/poos-reviews/dev
-datamodel: database/datamodel.graphql
-
-generate:
-  - generator: javascript-client
-    output: ./generated/prisma-client/
