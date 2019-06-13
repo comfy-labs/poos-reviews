@@ -1,7 +1,9 @@
 scalar DateTime
 
 type Query {
-  shitholes: [Shithole]
+  shitholes: [Shithole]!,
+  shitholeByName(name: String!): [Shithole]
+  shitholeById(id: String!): Shithole!
 }
 
 type Mutation {

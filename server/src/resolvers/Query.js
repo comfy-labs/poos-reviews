@@ -1,9 +1,21 @@
 
-async function shitholes_resolver(parent, args, context, info) {
-    return await context.db.query.shitholes();
-};
+async function shitholes(parent, args, context, info) {
+    return context.prisma.shitholes();
+}
 
-module.exports = { shitholes };
+async function shitholeByName(parent, args, context, info) {
+    return context.prisma.shitholes({where: {name_contains: args.name}});
+}
+
+async function shitholeById(parent, args, context, info) {
+    return await context.prisma.shithole({id: args.id});
+}
+
+module.exports = {
+    shitholeByName,
+    shitholeById,
+    shitholes,
+};
 
 
 // async function feed(parent, args, context, info) {
