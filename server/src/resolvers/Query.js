@@ -1,86 +1,90 @@
 
 async function shitholes(parent, args, context, info) {
-    return context.prisma.shitholes();
+  return context.prisma.shitholes();
 }
 
-async function shitholeByName(parent, args, context, info) {
-    return context.prisma.shitholes({where: {name_contains: args.name}});
+async function poosers(parent, args, context, info) {
+  return context.prisma.poosers();
 }
 
-async function shitholeById(parent, args, context, info) {
-    return await context.prisma.shithole({id: args.id});
+async function turdbits(parent, args, context, info) {
+  return context.prisma.turdbits();
+}
+
+async function shitholeWithName(parent, args, context, info) {
+  return context.prisma.shitholes({where: {name_contains: args.name}});
+}
+
+async function pooserTurdbits(parent, args, context, info) {
+  return await context.prisma.pooser({email: args.email}).turdbits();
+}
+
+async function poosersWithTurdbitsAndShitholes(parent, args, context, info) {
+  const fragment = `
+  fragment PoosersWithTurdbitsAndShitholes on Pooser {
+    id
+    name
+    email 
+    turdbits {
+      id
+      text
+    }     
+  }
+  `;
+  return await context.prisma.poosers().$fragment(fragment);
+}
+
+/*
+ * City Mike requested these APIs
+ */
+
+// // AKA login
+// async function login(parent, args, context, info) {
+//
+// }
+//
+// // AKA signup
+// async function signup(parent, args, context, info) {
+//
+// }
+//
+// // AKA logout
+// async function logout(parent, args, context, info) {
+//
+// }
+
+// AKA getLocations(geolocationNW, geolocationSE)
+async function shitholesWithinBoundingBox(parent, args, context, info) {
+
+}
+
+// AKA getLocation(locationId)
+async function shitholeWithId(parent, args, context, info) {
+  return await context.prisma.shithole({id: args.id});
+}
+
+// AKA getReviews(locationId)
+async function turdbitsForShithole(parent, args, context, info) {
+  return await context.prisma.shithole({id: args.id}).turdbits();
+}
+
+// AKA 'getReview(reviewId)'
+async function turdbitWithId(parent, args, context, info) {
+  return await context.prisma.turdbit({id: args.id});
 }
 
 module.exports = {
-    shitholeByName,
-    shitholeById,
-    shitholes,
+  shitholes,
+  poosers,
+  turdbits,
+  shitholeWithName,
+  pooserTurdbits,
+  poosersWithTurdbitsAndShitholes,
+  // // login,
+  // // signup,
+  // // logout,
+  shitholesWithinBoundingBox,
+  shitholeWithId,
+  turdbitsForShithole,
+  turdbitWithId,
 };
-
-
-// async function feed(parent, args, context, info) {
-//   const { filter = {} } = args;
-//   const filters = [];
-//
-//   // review-based filters
-//   if (filter.accessibility) {
-//     filters.push({ accessibility_in: [filter.accessibility] });
-//   }
-//   if (filter.cleanliness) {
-//     filters.push({ cleanliness_gte: filter.cleanliness });
-//   }
-//   if (filter.locationPlaceId) {
-//     filters.push({ locationPlaceId_contains: filter.locationPlaceId });
-//   }
-//   if (filter.numStalls) {
-//     filters.push({ numStalls_gte: filter.numStalls });
-//   }
-//   if (filter.privacy) {
-//     filters.push({ privacy_gte: filter.privacy });
-//   }
-//   if (filter.rating) {
-//     filters.push({ rating_gte: filter.rating });
-//   }
-//   if (filter.tpQuality) {
-//     filters.push({ tpQuality_gte: filter.tpQuality });
-//   }
-//   // user-based filters
-//   if (filter.user && filter.user.id) {
-//     filters.push({ postedBy: { id: filter.user.id } });
-//   }
-//
-//   const where = filters.length ? { OR: filters } : {};
-//
-//   // const where = args.filter
-//   //   ? {
-//   //       OR: [
-//   //         { url_contains: args.filter },
-//   //         { description_contains: args.filter }
-//   //       ]
-//   //     }
-//   //   : {};
-//
-//   const queriedReviews = await context.db.query.reviews(
-//     { where, skip: args.skip, first: args.first, orderBy: args.orderBy },
-//     `{ id }`
-//   );
-//
-//   const countSelectionSet = `
-//     {
-//       aggregate {
-//         count
-//       }
-//     }
-//   `;
-//   const reviewsConnection = await context.db.query.reviewsConnection(
-//     {},
-//     countSelectionSet
-//   );
-//
-//   return {
-//     count: reviewsConnection.aggregate.count,
-//     reviewIds: queriedReviews.map(review => review.id)
-//   };
-// }
-//
-// module.exports = { feed };

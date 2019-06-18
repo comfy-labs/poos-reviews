@@ -1,13 +1,21 @@
 scalar DateTime
 
 type Query {
-  shitholes: [Shithole]!,
-  shitholeByName(name: String!): [Shithole]
-  shitholeById(id: String!): Shithole!
+  shitholes: [Shithole]!
+  poosers: [Pooser]!
+  turdbits: [Turdbit]!
+  shitholeWithName(name: String!): [Shithole]
+  pooserTurdbits(email: String): [Turdbit]!
+  poosersWithTurdbitsAndShitholes: [Pooser]!
+  shitholesWithinBoundingBox(northWestLat: Float!, northWestLng: Float!, southEastLat: Float!, southEastLng: Float!): [Shithole]!
+  shitholeWithId(id: String!): Shithole
+  turdbitsForShithole(id: String!): [Turdbit]!
+  turdbitWithId(id: String!): Turdbit
 }
 
 type Mutation {
   createShithole(name: String!, address: String!, lat: Float!, lng: Float!): Shithole
+  createTurdbit(accessibility: Int, cleanliness: Int, stalls: Int, privacy: Int, text: String!, tpQuality: Int, overall: Int!, author: Pooser!, shithole: Shithole!): Turdbit
 }
 
 type AuthPayload {
@@ -20,7 +28,7 @@ type Pooser {
   name: String!
   email: String!
   password: String!
-  turdbits: [Turdbit!]!
+  turdbits: [Turdbit!]
   updatedAt: DateTime!
   createdAt: DateTime!
 }

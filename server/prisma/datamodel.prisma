@@ -17,8 +17,8 @@ type Turdbit {
   text: String
   tpQuality: Int
   overall: Int!
-  author: Pooser
-  shithole: Shithole
+  author: Pooser!
+  shithole: Shithole!
   updatedAt: DateTime! @updatedAt
   createdAt: DateTime! @createdAt
 }

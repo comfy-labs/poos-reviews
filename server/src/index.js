@@ -2,14 +2,13 @@ const { GraphQLServer } = require("graphql-yoga");
 const { prisma } = require('./generated/prisma-client');
 
 const Query = require("./resolvers/Query");
-const Shithole = require('./resolvers/Shithole');
+const Mutation = require("./resolvers/Mutation");
 
-// const Mutation = require("./resolvers/Mutation");
 // const AuthPayload = require("./resolvers/AuthPayload");
 
 const resolvers = {
   Query,
-  Shithole,
+  Mutation,
 };
 
 const server = new GraphQLServer({
