@@ -1,11 +1,11 @@
 const { prisma } = require('../src/generated/prisma-client');
 
 async function main() {
-  const pooser = await prisma.createPooser({
-    name: 'Poo',
-    email: 'poo@butt.com',
-    password: 'c0e81794384491161f1777c232bc6bd9ec38f616560b120fda8e90f383853542' // '12345'
-  });
+  // const user = await prisma.createUser({
+  //   name: 'Poo',
+  //   email: 'poo@butt.com',
+  //   password: 'c0e81794384491161f1777c232bc6bd9ec38f616560b120fda8e90f383853542' // '12345'
+  // });
 
   const shithole_ = await prisma.createShithole({
     name: 'Taqueria Guadalajara',
@@ -21,24 +21,24 @@ async function main() {
     lng: -117.160266
   });
 
-  await prisma.createTurdbit({
-    accessibility: 1,
-    cleanliness: 1,
-    stalls: 1,
-    privacy: 1,
-    text: 'DO NOT! GO IN THERE! WOOOOOOOO!',
-    tpQuality: 1,
-    overall: 1,
-    author: {
-      connect: {
-        id: pooser.id
-      }
-    },
-    shithole: {
-      connect: {
-        id: shithole.id
-      }
-    }
-  });
+  // await prisma.createTurdbit({
+  //   accessibility: 1,
+  //   cleanliness: 1,
+  //   stalls: 1,
+  //   privacy: 1,
+  //   text: 'DO NOT! GO IN THERE! WOOOOOOOO!',
+  //   tpQuality: 1,
+  //   overall: 1,
+  //   author: {
+  //     connect: {
+  //       id: user.id
+  //     }
+  //   },
+  //   shithole: {
+  //     connect: {
+  //       id: shithole.id
+  //     }
+  //   }
+  // });
 }
 main().catch(e =>console.error(e));

@@ -1,10 +1,11 @@
+const { authQueries } = require('graphql-authentication');
 
 async function shitholes(parent, args, context, info) {
   return context.prisma.shitholes();
 }
 
-async function poosers(parent, args, context, info) {
-  return context.prisma.poosers();
+async function users(parent, args, context, info) {
+  return context.prisma.users();
 }
 
 async function turdbits(parent, args, context, info) {
@@ -15,13 +16,13 @@ async function shitholeWithName(parent, args, context, info) {
   return context.prisma.shitholes({where: {name_contains: args.name}});
 }
 
-async function pooserTurdbits(parent, args, context, info) {
-  return await context.prisma.pooser({email: args.email}).turdbits();
+async function userTurdbits(parent, args, context, info) {
+  return await context.prisma.user({email: args.email}).turdbits();
 }
 
-async function poosersWithTurdbitsAndShitholes(parent, args, context, info) {
+async function usersWithTurdbitsAndShitholes(parent, args, context, info) {
   const fragment = `
-  fragment PoosersWithTurdbitsAndShitholes on Pooser {
+  fragment UsersWithTurdbitsAndShitholes on User {
     id
     name
     email 
@@ -31,7 +32,7 @@ async function poosersWithTurdbitsAndShitholes(parent, args, context, info) {
     }     
   }
   `;
-  return await context.prisma.poosers().$fragment(fragment);
+  return await context.prisma.users().$fragment(fragment);
 }
 
 /*
@@ -52,6 +53,11 @@ async function poosersWithTurdbitsAndShitholes(parent, args, context, info) {
 // async function logout(parent, args, context, info) {
 //
 // }
+
+async function currentUser(parent, args, context, info) {
+  // Straight-up pass through to graphql-authentication
+  return authQueries.currentUser(parent, args, context, info);
+}
 
 // AKA getLocations(geolocationNW, geolocationSE)
 async function shitholesWithinBoundingBox(parent, args, context, info) {
@@ -75,11 +81,11 @@ async function turdbitWithId(parent, args, context, info) {
 
 module.exports = {
   shitholes,
-  poosers,
+  users,
   turdbits,
   shitholeWithName,
-  pooserTurdbits,
-  poosersWithTurdbitsAndShitholes,
+  userTurdbits,
+  usersWithTurdbitsAndShitholes,
   // // login,
   // // signup,
   // // logout,
@@ -87,4 +93,5 @@ module.exports = {
   shitholeWithId,
   turdbitsForShithole,
   turdbitWithId,
+  currentUser,
 };

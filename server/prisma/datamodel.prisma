@@ -1,13 +1,3 @@
-type Pooser {
-  id: ID! @unique @id
-  name: String!
-  email: String @unique
-  password: String!
-  turdbits: [Turdbit!]!
-  updatedAt: DateTime! @updatedAt
-  createdAt: DateTime! @createdAt
-}
-
 type Turdbit {
   id: ID! @unique @id
   accessibility: Int
@@ -17,7 +7,7 @@ type Turdbit {
   text: String
   tpQuality: Int
   overall: Int!
-  author: Pooser!
+  author: User!
   shithole: Shithole!
   updatedAt: DateTime! @updatedAt
   createdAt: DateTime! @createdAt
@@ -40,6 +30,20 @@ type Shitpic {
   caption: String
 }
 
-
-
-
+type User {
+  id: ID! @unique @id
+  email: String! @unique
+  password: String!
+  name: String!
+  inviteToken: String
+  inviteAccepted: Boolean! @default(value: false)
+  emailConfirmed: Boolean! @default(value: false)
+  emailConfirmToken: String
+  resetToken: String
+  resetExpires: DateTime
+  deletedAt: DateTime
+  lastLogin: DateTime
+  joinedAt: DateTime!
+  isSuper: Boolean! @default(value: false)
+  turdbits: [Turdbit!]!
+}

@@ -3,7 +3,8 @@
 endpoint: https://us1.prisma.sh/mark-dhillon-d38778/poos-reviews/dev
 
 # Points to the file that holds your data model
-datamodel: datamodel.prisma
+datamodel:
+  - datamodel.prisma
 
 # You can only access the API when providing JWTs that are signed with this secret
 secret: mysecret123

@@ -1,12 +1,14 @@
+# import Query.*, Mutation.* from '../node_modules/graphql-authentication/schema.graphql'
+
 scalar DateTime
 
 type Query {
   shitholes: [Shithole]!
-  poosers: [Pooser]!
+  users: [User]!
   turdbits: [Turdbit]!
   shitholeWithName(name: String!): [Shithole]
-  pooserTurdbits(email: String): [Turdbit]!
-  poosersWithTurdbitsAndShitholes: [Pooser]!
+  userTurdbits(email: String): [Turdbit]!
+  usersWithTurdbitsAndShitholes: [User]!
   shitholesWithinBoundingBox(northWestLat: Float!, northWestLng: Float!, southEastLat: Float!, southEastLng: Float!): [Shithole]!
   shitholeWithId(id: String!): Shithole
   turdbitsForShithole(id: String!): [Turdbit]!
@@ -15,22 +17,7 @@ type Query {
 
 type Mutation {
   createShithole(name: String!, address: String!, lat: Float!, lng: Float!): Shithole
-  createTurdbit(accessibility: Int, cleanliness: Int, stalls: Int, privacy: Int, text: String!, tpQuality: Int, overall: Int!, author: Pooser!, shithole: Shithole!): Turdbit
-}
-
-type AuthPayload {
-  token: String
-  user: Pooser
-}
-
-type Pooser {
-  id: ID!
-  name: String!
-  email: String!
-  password: String!
-  turdbits: [Turdbit!]
-  updatedAt: DateTime!
-  createdAt: DateTime!
+  createTurdbit(accessibility: Int, cleanliness: Int, stalls: Int, privacy: Int, text: String!, tpQuality: Int, overall: Int!, author: User!, shithole: Shithole!): Turdbit
 }
 
 type Turdbit {
@@ -42,7 +29,7 @@ type Turdbit {
   text: String
   tpQuality: Int
   overall: Int!
-  author: Pooser
+  author: User
   shithole: Shithole
   updatedAt: DateTime!
   createdAt: DateTime!
@@ -63,10 +50,4 @@ type Shitpic {
   id: ID!
   url: String!
   caption: String
-}
-
-type Link {
-  id: ID!
-  description: String!
-  url: String!
 }
