@@ -2,7 +2,7 @@ const { authMutations} = require('graphql-authentication');
 
 // AKA 'postReview(reviewDetails)'
 async function createTurdbit(parent, args, context, info) {
-  const turdbit = await prisma.createTurdbit({
+  const turdbit = await context.prisma.createTurdbit({
     accessibility: args.accessibility,
     cleanliness: args.cleanliness,
     stalls: args.stalls,

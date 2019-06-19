@@ -17,7 +17,7 @@ type Query {
 
 type Mutation {
   createShithole(name: String!, address: String!, lat: Float!, lng: Float!): Shithole
-  createTurdbit(accessibility: Int, cleanliness: Int, stalls: Int, privacy: Int, text: String!, tpQuality: Int, overall: Int!, author: User!, shithole: Shithole!): Turdbit
+  createTurdbit(accessibility: Int, cleanliness: Int, stalls: Int, privacy: Int, text: String!, tpQuality: Int, overall: Int!, author: String!, shithole: String!): Turdbit
 }
 
 type Turdbit {
