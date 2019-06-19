@@ -9,7 +9,7 @@ type Query {
   shitholeWithName(name: String!): [Shithole]
   userTurdbits(email: String): [Turdbit]!
   usersWithTurdbitsAndShitholes: [User]!
-  shitholesWithinBoundingBox(northWestLat: Float!, northWestLng: Float!, southEastLat: Float!, southEastLng: Float!): [Shithole]!
+  shitholesWithinBoundingBox(southWestLat: Float!, southWestLng: Float!, northEastLat: Float!, northEastLng: Float!): [Shithole]!
   shitholeWithId(id: String!): Shithole
   turdbitsForShithole(id: String!): [Turdbit]!
   turdbitWithId(id: String!): Turdbit

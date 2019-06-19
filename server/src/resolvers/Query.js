@@ -65,13 +65,12 @@ async function shitholesWithinBoundingBox(parent, args, context, info) {
    * southWest.lat < lat < northEast.lat
    * southWest.lng < lng < northEast.lng
    */
-  console.log(args.southEastLat);
   return await context.prisma.shitholes(
     { where: { AND: [
-          { lat_gte: args.southEastLat },
-          { lat_lte: args.northWestLat },
-          { lng_gte: args.southEastLng },
-          { lng_lte: args.northWestLng }
+          { lat_gte: args.southWestLat },
+          { lat_lte: args.northEastLat },
+          { lng_gte: args.southWestLng },
+          { lng_lte: args.northEastLng }
         ]
       }
     }
