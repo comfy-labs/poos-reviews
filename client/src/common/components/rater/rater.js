@@ -77,20 +77,12 @@ export default class Rater extends React.Component {
   render() {
     const {
       disabled,
-      iconFilled,
-      iconHovered,
-      iconNormal,
-      iconFilledRenderer,
-      iconHoveredRenderer,
-      iconNormalRenderer,
       itemStyle,
       itemClassName,
       max,
       onChange,
       readOnly,
-      style,
-      value,
-      ...rest
+      value
     } = this.props;
 
     const rating = [];
@@ -123,7 +115,6 @@ export default class Rater extends React.Component {
             ? { ...styles.disabled, ...this.props.style }
             : this.props.style
         }
-        {...rest}
       >
         {rating}
       </div>

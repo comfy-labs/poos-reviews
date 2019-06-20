@@ -33,13 +33,6 @@ const styles = theme => {
     },
     iconSmall: {
       fontSize: 20
-    },
-    toolbar: {
-      alignItems: "center",
-      backgroundColor: theme.palette.primary.light,
-      display: "flex",
-      flexDirection: "column",
-      justifyContent: "space-between"
     }
   };
 };
