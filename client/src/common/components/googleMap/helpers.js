@@ -53,8 +53,8 @@ export function buildSearchThisAreaButton(handleClick) {
   firstChild.style.outline = "none";
   firstChild.style.padding = "0";
   firstChild.style.width = "160px";
-  firstChild.title = "Search This Area";
-  firstChild.innerText = "Search This Area";
+  firstChild.title = "Search this area";
+  firstChild.innerText = "Search this area";
   firstChild.addEventListener("click", handleClick);
 
   controlDiv.appendChild(firstChild);

@@ -18,7 +18,6 @@ import WriteAReviewModal from "../../common/components/forms/review/writeAReview
 import login from "../../common/data/apiRequest/graphQLRequest/authentication/login";
 import signUp from "../../common/data/apiRequest/graphQLRequest/authentication/signUp";
 import serverRequest from "../../common/data/apiRequest/serverRequest/serverRequest";
-import getAllShitholes from "../../common/data/apiRequest/graphQLRequest/shitholes/getAllShitholes";
 
 // @todo: remove
 const mockCompleteReviewData = {
@@ -223,15 +222,6 @@ class Home extends React.Component {
     });
   };
 
-  handleDbHit = function(event, more) {
-    console.log('You tryina hit the DB?');
-    console.log(event);
-    getAllShitholes().then(function(v){
-      console.log('dead homies.');
-      console.log(v);
-    });
-  };
-
   handleLocationButtonClick = data => {
     console.log(data);
   };
@@ -297,13 +287,13 @@ class Home extends React.Component {
     return (
       <React.Fragment>
         <Script
-          url="https://maps.googleapis.com/maps/api/js?key=AIzaSyBGc7C0LtRisG8VxJQonWDh-sL5GIoXYJU&libraries=places"
+          url="https://maps.googleapis.com/maps/api/js?key=AIzaSyBo-Jx7q5tVqEhxtKm9AlnWfdTkv3kNUNo&libraries=places"
           onLoad={this.handleScriptLoad}
         />
         <div className={this.props.classes.layout}>
-          <Toolbar className={this.props.classes.toolbarMain}>
+          <Toolbar className={this.props.classes.toolbarMain} variant="dense">
             <Typography
-              component="h2"
+              component="h5"
               variant="h5"
               color="inherit"
               align="center"
@@ -313,12 +303,12 @@ class Home extends React.Component {
               Poos Reviews
             </Typography>
           </Toolbar>
-          <Toolbar className={this.props.classes.toolbarSecondary}>
+          <Toolbar
+            className={this.props.classes.toolbarSecondary}
+            variant="dense"
+          >
             <Button onClick={this.toggleWriteAReviewModal} size="small">
               Write a Review
-            </Button>
-            <Button onClick={this.handleDbHit} size="small">
-                Hit the DB
             </Button>
             <div>
               <Button
