@@ -42,7 +42,7 @@ class CompactReviewsList extends React.Component {
                         <Typography
                           component="div"
                           color="textPrimary"
-                          inline
+                          display="inline"
                           variant="h6"
                         >
                           {location.name}
@@ -50,7 +50,7 @@ class CompactReviewsList extends React.Component {
                         <Typography
                           component="div"
                           color="textSecondary"
-                          inline
+                          display="inline"
                           noWrap
                           variant="h6"
                         >
@@ -73,7 +73,7 @@ class CompactReviewsList extends React.Component {
 export default withStyles(theme => ({
   paper: {
     backgroundColor: theme.palette.background.paper,
-    marginBottom: theme.spacing.unit * 4,
+    marginBottom: theme.spacing(4),
     width: "100%"
   },
   inline: {

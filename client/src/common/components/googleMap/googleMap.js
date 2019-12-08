@@ -29,7 +29,7 @@ const styles = theme => ({
   map: {
     height: "100%",
     minHeight: 400,
-    marginBottom: theme.spacing.unit * 4,
+    marginBottom: theme.spacing(4),
     position: "relative",
     width: "100%"
   }

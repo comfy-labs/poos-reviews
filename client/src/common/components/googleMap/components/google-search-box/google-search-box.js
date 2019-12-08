@@ -9,17 +9,9 @@ import Paper from "@material-ui/core/Paper";
 import Popper from "@material-ui/core/Popper";
 import TextField from "@material-ui/core/TextField";
 import Typography from "@material-ui/core/Typography";
-import { withStyles } from "@material-ui/core/styles";
-import getStyles from "./google-search-box-styles";
 import useAutocompleteService from "./use-autocomplete-service";
 
-function GoogleSearchBox({
-  classes,
-  google,
-  isDisabled,
-  onLocationSelect,
-  text
-}) {
+function GoogleSearchBox({ google, isDisabled, onLocationSelect, text }) {
   const inputRef = useRef(null);
   const [isOpen, setIsOpen] = useState(false);
   const [inputValue, setInputValue] = useState(text);
@@ -44,7 +36,6 @@ function GoogleSearchBox({
         fullWidth
         id="location"
         InputLabelProps={{ shrink: true }}
-        inputProps={{ style: { padding: 10 } }}
         label="Search"
         margin="dense"
         onChange={handleChange}
@@ -54,7 +45,7 @@ function GoogleSearchBox({
       />
       <Popper
         anchorEl={inputRef.current}
-        className={classes.popper}
+        style={{ zIndex: 2 }}
         disablePortal
         open={isOpen}
         transition
@@ -76,7 +67,6 @@ function GoogleSearchBox({
                   <MenuList dense>
                     {predictions.map(prediction => (
                       <MenuItem
-                        classes={classes.menuItem}
                         key={prediction.place_id}
                         onClick={() => {
                           onLocationSelect(prediction);
@@ -102,7 +92,6 @@ function GoogleSearchBox({
 }
 
 GoogleSearchBox.propsTypes = {
-  classes: PropTypes.object.isRequired,
   google: PropTypes.object.isRequired,
   isDisabled: PropTypes.bool,
   isOpen: PropTypes.bool.isRequired,
@@ -113,4 +102,4 @@ GoogleSearchBox.defaultProps = {
   isDisabled: false
 };
 
-export default withStyles(getStyles)(GoogleSearchBox);
+export default GoogleSearchBox;

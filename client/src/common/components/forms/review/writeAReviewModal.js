@@ -19,22 +19,22 @@ const styles = theme => {
   return {
     dialog: {
       [theme.breakpoints.down("sm")]: {
-        width: window.innerWidth - theme.spacing.unit * 12
+        width: window.innerWidth - theme.spacing(12)
       },
       [theme.breakpoints.up("sm")]: {
-        width: 600 - theme.spacing.unit * 12
+        width: 600 - theme.spacing(12)
       }
     },
     stepper: {
-      padding: `0 0 ${theme.spacing.unit}px 0`
+      padding: `0 0 ${theme.spacing(1)}px 0`
     },
     buttons: {
       display: "flex",
       justifyContent: "flex-end"
     },
     button: {
-      marginTop: theme.spacing.unit * 3,
-      marginLeft: theme.spacing.unit
+      marginTop: theme.spacing(3),
+      marginLeft: theme.spacing(1)
     }
   };
 };

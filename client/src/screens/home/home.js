@@ -130,9 +130,9 @@ const mockLocations = [
 const styles = theme => ({
   layout: {
     width: "auto",
-    marginLeft: theme.spacing.unit * 3,
-    marginRight: theme.spacing.unit * 3,
-    [theme.breakpoints.up(1100 + theme.spacing.unit * 3 * 2)]: {
+    marginLeft: theme.spacing(3),
+    marginRight: theme.spacing(3),
+    [theme.breakpoints.up(1100 + theme.spacing(6))]: {
       width: 1100,
       marginLeft: "auto",
       marginRight: "auto"
@@ -148,12 +148,12 @@ const styles = theme => ({
     justifyContent: "space-between"
   },
   mainGrid: {
-    marginTop: theme.spacing.unit * 3
+    marginTop: theme.spacing(3)
   },
   footer: {
     backgroundColor: theme.palette.background.paper,
-    marginTop: theme.spacing.unit * 8,
-    padding: `${theme.spacing.unit * 6}px 0`
+    marginTop: theme.spacing(8),
+    padding: `${theme.spacing(6)}px 0`
   }
 });
 

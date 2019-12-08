@@ -24,8 +24,8 @@ import Rater from "../../../rater/rater";
 const styles = theme => {
   return {
     button: {
-      marginTop: theme.spacing.unit * 3,
-      marginLeft: theme.spacing.unit
+      marginTop: theme.spacing(3),
+      marginLeft: theme.spacing(1)
     },
     buttons: {
       display: "flex",
@@ -247,7 +247,7 @@ class ReviewMetricsPage extends React.Component {
         <Typography variant="h6" gutterBottom>
           Write A Review
         </Typography>
-        <Grid container spacing={24}>
+        <Grid container spacing={3}>
           <Grid item xs={12}>
             <Rater
               value={this.getField("rating")}
@@ -256,7 +256,7 @@ class ReviewMetricsPage extends React.Component {
             />
           </Grid>
           <Grid item xs={12}>
-            <div ref="location" style={{ height: 73 }}>
+            <div ref="location">
               {google ? null : <LinearProgress />}
               <TextField
                 disabled={!google}
@@ -264,7 +264,7 @@ class ReviewMetricsPage extends React.Component {
                 id="location"
                 InputLabelProps={{ shrink: true }}
                 label="Bathroom Location"
-                margin="normal"
+                margin="dense"
                 onChange={this.handleLocationChange}
                 required
                 value={this.getField("location").label}
@@ -322,7 +322,7 @@ class ReviewMetricsPage extends React.Component {
               id="accessibility"
               InputLabelProps={{ shrink: true }}
               label="Accessibility"
-              margin="normal"
+              margin="dense"
               onChange={this.handleTextFieldChange("accessibility")}
               required
               select
@@ -343,7 +343,7 @@ class ReviewMetricsPage extends React.Component {
               id="privacy"
               InputLabelProps={{ shrink: true }}
               label="Privacy"
-              margin="normal"
+              margin="dense"
               onChange={this.handleTextFieldChange("privacy")}
               required
               select
@@ -363,7 +363,7 @@ class ReviewMetricsPage extends React.Component {
               id="numStalls"
               InputLabelProps={{ shrink: true }}
               label="Number of Stalls"
-              margin="normal"
+              margin="dense"
               onChange={this.handleTextFieldChange("numStalls")}
               required
               type="number"
@@ -377,7 +377,7 @@ class ReviewMetricsPage extends React.Component {
               id="cleanliness"
               InputLabelProps={{ shrink: true }}
               label="Cleanliness"
-              margin="normal"
+              margin="dense"
               onChange={this.handleTextFieldChange("cleanliness")}
               required
               select
@@ -397,7 +397,7 @@ class ReviewMetricsPage extends React.Component {
               id="tpQuality"
               InputLabelProps={{ shrink: true }}
               label="Toilet Paper Quality"
-              margin="normal"
+              margin="dense"
               onChange={this.handleTextFieldChange("tpQuality")}
               required
               select
@@ -417,7 +417,7 @@ class ReviewMetricsPage extends React.Component {
               id="reviewText"
               InputLabelProps={{ shrink: true }}
               label="Review / Description"
-              margin="normal"
+              margin="dense"
               multiline
               name="reviewText"
               onChange={this.handleTextFieldChange("reviewText")}

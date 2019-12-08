@@ -21,22 +21,22 @@ const styles = theme => {
   return {
     dialog: {
       [theme.breakpoints.down("sm")]: {
-        width: window.innerWidth - theme.spacing.unit * 12
+        width: window.innerWidth - theme.spacing(12)
       },
       [theme.breakpoints.up("sm")]: {
-        width: 600 - theme.spacing.unit * 12
+        width: 600 - theme.spacing(12)
       }
     },
     stepper: {
-      padding: `${theme.spacing.unit * 3}px 0 ${theme.spacing.unit * 5}px`
+      padding: `${theme.spacing(3)}px 0 ${theme.spacing(5)}px`
     },
     buttons: {
       display: "flex",
       justifyContent: "flex-end"
     },
     button: {
-      marginTop: theme.spacing.unit * 3,
-      marginLeft: theme.spacing.unit
+      marginTop: theme.spacing(3),
+      marginLeft: theme.spacing(1)
     }
   };
 };
@@ -89,7 +89,7 @@ class CompleteReviewModal extends React.Component {
         <div className={classes.dialog}>
           <DialogTitle id="responsive-dialog-title">{data.name}</DialogTitle>
           <DialogContent>
-            <Grid container spacing={24}>
+            <Grid container spacing={3}>
               <Grid item xs={12}>
                 <Card>
                   <CardMedia
@@ -105,7 +105,7 @@ class CompleteReviewModal extends React.Component {
                 <Rater value={data.rating} max={5} readOnly />
               </Grid>
               <Grid item xs={12}>
-                <div ref="location" style={{ height: 73 }}>
+                <div ref="location">
                   {this.state.isLoading ? null : <LinearProgress />}
                   <TextField
                     disabled
@@ -113,7 +113,7 @@ class CompleteReviewModal extends React.Component {
                     id="location"
                     InputLabelProps={{ shrink: true }}
                     label="Bathroom Location"
-                    margin="normal"
+                    margin="dense"
                     value={data.description}
                     variant="outlined"
                   />
@@ -127,7 +127,7 @@ class CompleteReviewModal extends React.Component {
                   id="accessibility"
                   InputLabelProps={{ shrink: true }}
                   label="Accessibility"
-                  margin="normal"
+                  margin="dense"
                   value={data.accessibility}
                   variant="outlined"
                 />
@@ -140,7 +140,7 @@ class CompleteReviewModal extends React.Component {
                   id="privacy"
                   InputLabelProps={{ shrink: true }}
                   label="Privacy"
-                  margin="normal"
+                  margin="dense"
                   value={data.privacy}
                   variant="outlined"
                 />
@@ -152,7 +152,7 @@ class CompleteReviewModal extends React.Component {
                   id="numStalls"
                   InputLabelProps={{ shrink: true }}
                   label="Number of Stalls"
-                  margin="normal"
+                  margin="dense"
                   type="number"
                   value={data.numStalls}
                   variant="outlined"
@@ -165,7 +165,7 @@ class CompleteReviewModal extends React.Component {
                   id="cleanliness"
                   InputLabelProps={{ shrink: true }}
                   label="Cleanliness"
-                  margin="normal"
+                  margin="dense"
                   value={data.cleanliness}
                   variant="outlined"
                 />
@@ -177,7 +177,7 @@ class CompleteReviewModal extends React.Component {
                   id="tpQuality"
                   InputLabelProps={{ shrink: true }}
                   label="Toilet Paper Quality"
-                  margin="normal"
+                  margin="dense"
                   value={data.tpQuality}
                   variant="outlined"
                 />
@@ -189,7 +189,7 @@ class CompleteReviewModal extends React.Component {
                   id="reviewText"
                   InputLabelProps={{ shrink: true }}
                   label="Review / Description"
-                  margin="normal"
+                  margin="dense"
                   multiline
                   name="reviewText"
                   rows="4"

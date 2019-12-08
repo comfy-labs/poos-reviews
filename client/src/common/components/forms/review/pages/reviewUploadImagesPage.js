@@ -15,8 +15,8 @@ import UploadedImageListItem from "../uploadedImageListItem";
 const styles = theme => {
   return {
     button: {
-      marginTop: theme.spacing.unit * 3,
-      marginLeft: theme.spacing.unit
+      marginTop: theme.spacing(3),
+      marginLeft: theme.spacing(1)
     },
     buttons: {
       display: "flex",
@@ -26,10 +26,10 @@ const styles = theme => {
       width: "100%"
     },
     leftIcon: {
-      marginRight: theme.spacing.unit
+      marginRight: theme.spacing(1)
     },
     rightIcon: {
-      marginLeft: theme.spacing.unit
+      marginLeft: theme.spacing(1)
     },
     iconSmall: {
       fontSize: 20

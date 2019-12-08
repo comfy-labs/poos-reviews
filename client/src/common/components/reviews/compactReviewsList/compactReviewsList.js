@@ -73,7 +73,7 @@ class CompactReviewsList extends React.Component {
 export default withStyles(theme => ({
   paper: {
     backgroundColor: theme.palette.background.paper,
-    marginBottom: theme.spacing.unit * 4,
+    marginBottom: theme.spacing(1),
     width: "100%"
   },
   inline: {
