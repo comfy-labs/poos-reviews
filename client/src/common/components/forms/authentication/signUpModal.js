@@ -10,6 +10,7 @@ import FormControl from "@material-ui/core/FormControl";
 import Input from "@material-ui/core/Input";
 import InputLabel from "@material-ui/core/InputLabel";
 import withStyles from "@material-ui/core/styles/withStyles";
+import { CircularProgress } from "@material-ui/core";
 
 const styles = theme => ({
   layout: {
@@ -127,7 +128,11 @@ class SignUpModal extends React.Component {
                 disabled={!this.validateSubmission(email, name, password)}
                 onClick={this.handleSubmit}
               >
-                Sign Up
+                {this.props.isLoading ? (
+                  <CircularProgress color="secondary" size={14} thickness={8} />
+                ) : (
+                  "Sign Up"
+                )}
               </Button>
             </div>
           </main>
@@ -139,6 +144,7 @@ class SignUpModal extends React.Component {
 
 SignUpModal.propTypes = {
   classes: PropTypes.object.isRequired,
+  isLoading: PropTypes.bool.isRequired,
   isOpen: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired
 };

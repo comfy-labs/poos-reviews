@@ -1,0 +1,16 @@
+{
+  "data": [
+    {
+      "accessibility": "test",
+      "cleanliness": "test",
+      "description": "test",
+      "image": "https://kingfisher.scene7.com/is/image/Kingfisher/Category_Image_Bathroom_Suites?$PROMO_460_460$",
+      "name": "test",
+      "numStalls": "test",
+      "privacy": "test",
+      "rating": 4,
+      "reviewText": "test",
+      "tpQuality": 5
+    }
+  ]
+}

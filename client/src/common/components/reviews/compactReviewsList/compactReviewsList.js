@@ -10,43 +10,6 @@ import Paper from "@material-ui/core/Paper";
 import Typography from "@material-ui/core/Typography";
 import { withStyles } from "@material-ui/core/styles";
 
-function buildRow(review, classes) {
-  const { description, username } = review;
-  return (
-    <ListItem alignItems="flex-start">
-      <ListItemAvatar>
-        <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" />
-      </ListItemAvatar>
-      <ListItemText
-        primary={
-          <React.Fragment>
-            <Typography
-              component="span"
-              className={classes.inline}
-              color="textPrimary"
-            >
-              {username}
-            </Typography>
-            {description.slice(0, 100)}
-          </React.Fragment>
-        }
-      />
-    </ListItem>
-  );
-}
-
-function buildRows(reviews, classes) {
-  return reviews.map((review, index) => {
-    return (
-      <div key={index}>
-        {index === 0 ? <Divider /> : null}
-        {buildRow(review, classes)}
-        <Divider />
-      </div>
-    );
-  });
-}
-
 class CompactReviewsList extends React.Component {
   static propTypes = {
     classes: PropTypes.object.isRequired,
@@ -63,7 +26,36 @@ class CompactReviewsList extends React.Component {
     return (
       <Paper>
         <List className={classes.paper} dense>
-          {buildRows(reviews, classes)}
+          {reviews.map((review, index) => {
+            return (
+              <div key={index}>
+                {index === 0 ? <Divider /> : null}
+                <ListItem alignItems="center">
+                  <ListItemAvatar>
+                    <Avatar
+                      alt="Remy Sharp"
+                      src="/static/images/avatar/1.jpg"
+                    />
+                  </ListItemAvatar>
+                  <ListItemText
+                    primary={
+                      <React.Fragment>
+                        <Typography
+                          component="span"
+                          className={classes.inline}
+                          color="textPrimary"
+                        >
+                          {review.username}
+                        </Typography>
+                        {review.description.slice(0, 100)}
+                      </React.Fragment>
+                    }
+                  />
+                </ListItem>
+                <Divider />
+              </div>
+            );
+          })}
         </List>
       </Paper>
     );

@@ -5,13 +5,13 @@ import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
 import ListItemAvatar from "@material-ui/core/ListItemAvatar";
+import { ListSubheader } from "@material-ui/core";
 import Paper from "@material-ui/core/Paper";
+import Rating from "@material-ui/lab/Rating";
 import Typography from "@material-ui/core/Typography";
 import { withStyles } from "@material-ui/core/styles";
 
-import Rater from "../../rater/rater";
-
-class CompactReviewsList extends React.Component {
+class CompactLocationsList extends React.Component {
   static propTypes = {
     classes: PropTypes.object.isRequired,
     locations: PropTypes.arrayOf(
@@ -27,36 +27,51 @@ class CompactReviewsList extends React.Component {
     const { classes, locations } = this.props;
     return (
       <Paper>
-        <List className={classes.paper} dense>
+        <List
+          className={classes.paper}
+          dense
+          subheader={
+            <ListSubheader component="div">Places to Poo</ListSubheader>
+          }
+        >
           {locations.map((location, index) => {
             return (
               <div key={index}>
                 {index === 0 ? <Divider /> : null}
-                <ListItem alignItems="flex-start">
+                <ListItem alignItems="center">
                   <ListItemAvatar>
-                    <Rater value={location.rating} max={5} readOnly />
+                    <Rating
+                      value={location.rating}
+                      max={5}
+                      precision={0.5}
+                      readOnly
+                      size="small"
+                    />
                   </ListItemAvatar>
                   <ListItemText
                     primary={
-                      <React.Fragment>
-                        <Typography
-                          component="div"
-                          color="textPrimary"
-                          display="inline"
-                          variant="h6"
-                        >
-                          {location.name}
-                        </Typography>
-                        <Typography
-                          component="div"
-                          color="textSecondary"
-                          display="inline"
-                          noWrap
-                          variant="h6"
-                        >
-                          {location.description.slice(0, 100)}
-                        </Typography>
-                      </React.Fragment>
+                      <Typography
+                        component="div"
+                        color="textPrimary"
+                        display="inline"
+                        noWrap
+                        style={{ marginLeft: 10 }}
+                        variant="subtitle1"
+                      >
+                        {location.name}
+                      </Typography>
+                    }
+                    secondary={
+                      <Typography
+                        component="div"
+                        color="textSecondary"
+                        display="inline"
+                        noWrap
+                        style={{ marginLeft: 10 }}
+                        variant="subtitle1"
+                      >
+                        {location.description.slice(0, 100)}
+                      </Typography>
                     }
                   />
                 </ListItem>
@@ -79,4 +94,4 @@ export default withStyles(theme => ({
   inline: {
     display: "inline"
   }
-}))(CompactReviewsList);
+}))(CompactLocationsList);

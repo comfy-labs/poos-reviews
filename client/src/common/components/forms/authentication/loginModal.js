@@ -120,7 +120,7 @@ class LoginModal extends React.Component {
                 {this.props.isLoading ? (
                   <CircularProgress color="secondary" size={14} thickness={8} />
                 ) : (
-                  "Sign in"
+                  "Sign In"
                 )}
               </Button>
             </div>
