@@ -2,11 +2,17 @@ import { useState } from "react";
 import loginUser from "../../data/apiRequest/graphQLRequest/authentication/login";
 import signUpUser from "../../data/apiRequest/graphQLRequest/authentication/signUp";
 
+const DEFAULT_ERRORS = null;
+
 export default function useAuthentication() {
+  const [errors, setErrors] = useState(DEFAULT_ERRORS);
   const [isLoading, setIsLoading] = useState(false);
+
+  const clearErrors = () => setErrors(DEFAULT_ERRORS);
 
   const login = (email, password) => {
     setIsLoading(true);
+    setErrors(DEFAULT_ERRORS);
     return loginUser(email, password)
       .then(payload => {
         setIsLoading(false);
@@ -18,13 +24,16 @@ export default function useAuthentication() {
       })
       .catch(errors => {
         setIsLoading(false);
-        return { errors, user: null, token: null };
+        const errorPayload = Array.isArray(errors) ? errors : [errors];
+        setErrors(errorPayload);
+        return { errors: errorPayload, user: null, token: null };
       });
   };
 
   const signUp = (name, email, password) => {
     setIsLoading(true);
-    signUpUser(name, email, password)
+    setErrors(DEFAULT_ERRORS);
+    return signUpUser(name, email, password)
       .then(payload => {
         setIsLoading(false);
         return {
@@ -35,9 +44,11 @@ export default function useAuthentication() {
       })
       .catch(errors => {
         setIsLoading(false);
-        return { errors, user: null, token: null };
+        const errorPayload = Array.isArray(errors) ? errors : [errors];
+        setErrors(errorPayload);
+        return { errors: errorPayload, user: null, token: null };
       });
   };
 
-  return { isLoading, login, signUp };
+  return { clearErrors, errors, isLoading, login, signUp };
 }

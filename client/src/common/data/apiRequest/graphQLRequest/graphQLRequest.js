@@ -8,8 +8,8 @@ function stringifyParameters(parameters) {
     return isPlainObject(value)
       ? `${key}: { ${stringifyParameters(value)} }`
       : isString(value)
-        ? `${key}: "${value}"`
-        : `${key}: ${value}`;
+      ? `${key}: "${value}"`
+      : `${key}: ${value}`;
   }).join(" ");
 }
 
@@ -70,8 +70,5 @@ export default function graphQLRequest(endpoint, requestOptions) {
     headers: requestOptions.headers
   });
   const requestPayload = buildRequestPayload(requestOptions);
-  return graphQLClient
-    .request(requestPayload)
-    .then(response => response)
-    .catch(error => error.response);
+  return graphQLClient.request(requestPayload).then(response => response);
 }

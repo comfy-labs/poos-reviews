@@ -10,7 +10,7 @@ import FormControl from "@material-ui/core/FormControl";
 import Input from "@material-ui/core/Input";
 import InputLabel from "@material-ui/core/InputLabel";
 import withStyles from "@material-ui/core/styles/withStyles";
-import { CircularProgress } from "@material-ui/core";
+import { CircularProgress, DialogActions } from "@material-ui/core";
 
 const styles = theme => ({
   layout: {
@@ -77,19 +77,16 @@ class SignUpModal extends React.Component {
   };
 
   render() {
-    const { classes, isOpen, onClose } = this.props;
-    const { email, name, password } = this.state;
-
     return (
       <Dialog
         aria-labelledby="responsive-dialog-title"
-        onClose={onClose}
-        open={isOpen}
+        onClose={this.props.onClose}
+        open={this.props.isOpen}
       >
         <DialogTitle id="responsive-dialog-title">{"Sign Up"}</DialogTitle>
         <DialogContent>
-          <main className={classes.layout}>
-            <div className={classes.form}>
+          <main>
+            <div>
               <FormControl margin="normal" required fullWidth>
                 <InputLabel htmlFor="name">Name</InputLabel>
                 <Input
@@ -119,24 +116,29 @@ class SignUpModal extends React.Component {
                   onChange={this.handlePassworChange}
                 />
               </FormControl>
-              <Button
-                type="submit"
-                fullWidth
-                variant="contained"
-                color="primary"
-                className={classes.submit}
-                disabled={!this.validateSubmission(email, name, password)}
-                onClick={this.handleSubmit}
-              >
-                {this.props.isLoading ? (
-                  <CircularProgress color="secondary" size={14} thickness={8} />
-                ) : (
-                  "Sign Up"
-                )}
-              </Button>
             </div>
           </main>
         </DialogContent>
+        <DialogActions>
+          <Button
+            type="submit"
+            color="primary"
+            disabled={
+              !this.validateSubmission(
+                this.state.email,
+                this.state.name,
+                this.state.password
+              )
+            }
+            onClick={this.handleSubmit}
+          >
+            {this.props.isLoading ? (
+              <CircularProgress color="secondary" size={14} thickness={8} />
+            ) : (
+              "Sign Up"
+            )}
+          </Button>
+        </DialogActions>
       </Dialog>
     );
   }

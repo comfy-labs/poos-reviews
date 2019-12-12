@@ -6,12 +6,12 @@ import { withStyles } from "@material-ui/core/styles";
 import CompactLocationsList from "../../common/components/locations/compactLocationsList/compactLocationsList";
 import CompleteReviewModal from "../../common/components/reviews/completeReview/completeReview";
 import GoogleMap from "../../common/components/googleMap/googleMap";
+import NavBar from "../../common/components/nav-bar/nav-bar";
 import serverRequest from "../../common/data/apiRequest/serverRequest/serverRequest";
 import getStyles from "./home-styles";
 // @todo: remove mock data
 import mockLocationsResponse from "../../common/data/mock/mock-locations-response.json";
 import mockCompleteReviewResponse from "../../common/data/mock/mock-complete-review-response.json";
-import NavBar from "../../common/components/nav-bar/nav-bar";
 
 class Home extends React.Component {
   constructor(props) {

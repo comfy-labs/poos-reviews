@@ -1,8 +1,11 @@
 export default theme => ({
-  toolbar: {
-    borderBottom: `1px solid ${theme.palette.grey[300]}`
+  error: {
+    backgroundColor: theme.palette.error.dark
   },
-  title: {
-    flex: 1
+  leftContent: {
+    marginRight: "auto"
+  },
+  rightContent: {
+    marginLeft: "auto"
   }
 });

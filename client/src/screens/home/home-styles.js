@@ -18,9 +18,6 @@ export default theme => ({
   toolbarSecondary: {
     justifyContent: "space-between"
   },
-  mainGrid: {
-    marginTop: theme.spacing(3)
-  },
   footer: {
     backgroundColor: theme.palette.background.paper,
     marginTop: theme.spacing(8),
