@@ -53,7 +53,7 @@ class CompactLocationsList extends React.Component {
                       <Typography
                         component="div"
                         color="textPrimary"
-                        display="inline"
+                        display="block"
                         noWrap
                         style={{ marginLeft: 10 }}
                         variant="subtitle1"
@@ -65,7 +65,7 @@ class CompactLocationsList extends React.Component {
                       <Typography
                         component="div"
                         color="textSecondary"
-                        display="inline"
+                        display="block"
                         noWrap
                         style={{ marginLeft: 10 }}
                         variant="subtitle1"

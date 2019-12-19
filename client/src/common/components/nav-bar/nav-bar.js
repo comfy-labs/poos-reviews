@@ -1,11 +1,17 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import PropTypes from "prop-types";
 import get from "lodash/get";
 import {
   Button,
+  ClickAwayListener,
   Grid,
+  Grow,
   Hidden,
   IconButton,
+  MenuItem,
+  MenuList,
+  Paper,
+  Popper,
   Slide,
   Snackbar,
   SnackbarContent,
@@ -13,8 +19,9 @@ import {
   Typography,
   withStyles
 } from "@material-ui/core";
+import AccountCircleIcon from "@material-ui/icons/AccountCircle";
+import CloseIcon from "@material-ui/icons/Close";
 import RateReviewIcon from "@material-ui/icons/RateReview";
-import AccountCircle from "@material-ui/icons/AccountCircle";
 import LoginModal from "../forms/authentication/loginModal";
 import SignUpModal from "../forms/authentication/signUpModal";
 import WriteAReviewModal from "../forms/review/writeAReviewModal";
@@ -22,7 +29,9 @@ import getStyles from "./nab-bar-styles";
 import useAuthentication from "./use-authentication";
 
 function NavBar({ classes, google, onLogin, onSignUp, user }) {
-  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+  const accountRef = useRef(null);
+  const [isAccountMenuOpen, setIsAccountMenuOpen] = useState(false);
+  const [isLogInModalOpen, setIsLogInModalOpen] = useState(false);
   const [isSignUpModalOpen, setIsSignUpModalOpen] = useState(false);
   const [isWriteAReviewModalOpen, setIsWriteAReviewModalOpen] = useState(false);
   const { clearErrors, errors, isLoading, login, signUp } = useAuthentication();
@@ -44,17 +53,22 @@ function NavBar({ classes, google, onLogin, onSignUp, user }) {
         <SnackbarContent
           className={classes.error}
           message={<span>{errors && errors.join("/n")}</span>}
-          // action={[
-          //   <IconButton key="close" aria-label="close" color="inherit" onClick={onClose}>
-          //     <CloseIcon className={classes.icon} />
-          //   </IconButton>,
-          // ]}
+          action={[
+            <IconButton
+              key="close"
+              aria-label="close"
+              color="inherit"
+              onClick={clearErrors}
+            >
+              <CloseIcon className={classes.icon} />
+            </IconButton>
+          ]}
         />
       </Snackbar>
       <Toolbar disableGutters variant="dense">
         <Grid alignItems="center" container direction="row" justify="center">
           <Grid className={classes.leftContent} item>
-            <Hidden smDown>
+            <Hidden only="xs">
               <Button
                 onClick={() => setIsWriteAReviewModalOpen(true)}
                 size="small"
@@ -64,7 +78,7 @@ function NavBar({ classes, google, onLogin, onSignUp, user }) {
                 Write a Review
               </Button>
             </Hidden>
-            <Hidden mdUp>
+            <Hidden smUp>
               <IconButton
                 edge="start"
                 onClick={() => setIsWriteAReviewModalOpen(true)}
@@ -86,9 +100,9 @@ function NavBar({ classes, google, onLogin, onSignUp, user }) {
             </Typography>
           </Grid>
           <Grid className={classes.rightContent} item>
-            <Hidden smDown>
+            <Hidden only="xs">
               <Button
-                onClick={() => setIsLoginModalOpen(true)}
+                onClick={() => setIsLogInModalOpen(true)}
                 size="small"
                 style={{ marginRight: 10 }}
               >
@@ -104,20 +118,80 @@ function NavBar({ classes, google, onLogin, onSignUp, user }) {
                 </Button>
               )}
             </Hidden>
-            <Hidden mdUp>
-              <IconButton edge="end">
-                <AccountCircle color="action" />
+            <Hidden smUp>
+              <IconButton
+                edge="end"
+                onClick={() => setIsAccountMenuOpen(true)}
+                ref={accountRef}
+              >
+                <AccountCircleIcon color="action" />
               </IconButton>
+              <Popper
+                anchorEl={accountRef.current}
+                disablePortal
+                open={isAccountMenuOpen}
+                placement="bottom-end"
+                style={{ zIndex: 2 }}
+                transition
+              >
+                {({ TransitionProps, placement }) => (
+                  <Grow
+                    {...TransitionProps}
+                    id="menu-list-grow"
+                    style={{ transformOrigin: "bottom-end" }}
+                  >
+                    <Paper>
+                      <ClickAwayListener
+                        onClickAway={() => setIsAccountMenuOpen(false)}
+                      >
+                        <MenuList dense>
+                          {!user && (
+                            <MenuItem
+                              onClick={() => {
+                                setIsLogInModalOpen(true);
+                                setIsAccountMenuOpen(false);
+                              }}
+                            >
+                              <Typography noWrap variant="inherit">
+                                Log In
+                              </Typography>
+                            </MenuItem>
+                          )}
+                          {!user && (
+                            <MenuItem
+                              onClick={() => {
+                                setIsSignUpModalOpen(true);
+                                setIsAccountMenuOpen(false);
+                              }}
+                            >
+                              <Typography noWrap variant="inherit">
+                                Sign Up
+                              </Typography>
+                            </MenuItem>
+                          )}
+                          {user && (
+                            <MenuItem>
+                              <Typography noWrap variant="inherit">
+                                Log Out
+                              </Typography>
+                            </MenuItem>
+                          )}
+                        </MenuList>
+                      </ClickAwayListener>
+                    </Paper>
+                  </Grow>
+                )}
+              </Popper>
             </Hidden>
           </Grid>
         </Grid>
       </Toolbar>
       <LoginModal
         isLoading={isLoading}
-        isOpen={isLoginModalOpen}
+        isOpen={isLogInModalOpen}
         onClose={() => {
           clearErrors();
-          setIsLoginModalOpen(false);
+          setIsLogInModalOpen(false);
         }}
         onSubmit={handleLogin}
       />
