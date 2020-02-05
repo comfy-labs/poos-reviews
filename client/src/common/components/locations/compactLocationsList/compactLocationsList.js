@@ -7,9 +7,9 @@ import ListItemText from "@material-ui/core/ListItemText";
 import ListItemAvatar from "@material-ui/core/ListItemAvatar";
 import { ListSubheader } from "@material-ui/core";
 import Paper from "@material-ui/core/Paper";
-import Rating from "@material-ui/lab/Rating";
 import Typography from "@material-ui/core/Typography";
 import { withStyles } from "@material-ui/core/styles";
+import PooRating from "../../rater/poo-rating";
 
 class CompactLocationsList extends React.Component {
   static propTypes = {
@@ -40,13 +40,7 @@ class CompactLocationsList extends React.Component {
                 {index === 0 ? <Divider /> : null}
                 <ListItem alignItems="center">
                   <ListItemAvatar>
-                    <Rating
-                      value={location.rating}
-                      max={5}
-                      precision={0.5}
-                      readOnly
-                      size="small"
-                    />
+                    <PooRating isReadOnly value={location.rating} />
                   </ListItemAvatar>
                   <ListItemText
                     primary={

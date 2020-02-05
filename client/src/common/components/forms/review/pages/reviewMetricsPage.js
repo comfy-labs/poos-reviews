@@ -15,8 +15,7 @@ import Popper from "@material-ui/core/Popper";
 import TextField from "@material-ui/core/TextField";
 import Typography from "@material-ui/core/Typography";
 import { withStyles } from "@material-ui/core/styles";
-
-import Rater from "../../../rater/rater";
+import PooRating from "../../../rater/poo-rating";
 // import getReviewsByUserId from "../../../../data/apiRequest/graphQLRequest/reviews/getReviewByUserId";
 // import getReviewsByPlaceId from "../../../../data/apiRequest/graphQLRequest/reviews/getReviewsByPlaceId";
 // import postReview from "../../../../data/apiRequest/graphQLRequest/reviews/postReview";
@@ -216,7 +215,7 @@ class ReviewMetricsPage extends React.Component {
     }
   };
 
-  handleRatingChange = rating => {
+  handleRatingChange = (event, rating) => {
     this.setState(state => {
       return { ...state, rating };
     });
@@ -249,10 +248,11 @@ class ReviewMetricsPage extends React.Component {
         </Typography>
         <Grid container spacing={3}>
           <Grid item xs={12}>
-            <Rater
-              value={this.getField("rating")}
-              max={5}
+            <PooRating
               onChange={this.handleRatingChange}
+              name="rating"
+              precision={1}
+              value={this.getField("rating")}
             />
           </Grid>
           <Grid item xs={12}>

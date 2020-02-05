@@ -11,11 +11,10 @@ import DialogTitle from "@material-ui/core/DialogTitle";
 import Grid from "@material-ui/core/Grid";
 import LinearProgress from "@material-ui/core/LinearProgress";
 import TextField from "@material-ui/core/TextField";
-// import Typography from "@material-ui/core/Typography";
 import withMobileDialog from "@material-ui/core/withMobileDialog";
 import withStyles from "@material-ui/core/styles/withStyles";
 
-import Rater from "../../rater/rater";
+import PooRating from "../../rater/poo-rating";
 
 const styles = theme => {
   return {
@@ -102,7 +101,7 @@ class CompleteReviewModal extends React.Component {
                 </Card>
               </Grid>
               <Grid item xs={12}>
-                <Rater value={data.rating} max={5} readOnly />
+                <PooRating isReadOnly value={data.rating} />
               </Grid>
               <Grid item xs={12}>
                 <div ref="location">
