@@ -4,8 +4,9 @@ import Script from "react-load-script";
 import Button from "@material-ui/core/Button";
 import { withStyles } from "@material-ui/core/styles";
 import CompactLocationsList from "../../common/components/locations/compactLocationsList/compactLocationsList";
-import CompleteReviewModal from "../../common/components/reviews/completeReview/completeReview";
+import CompleteReviewModal from "../../common/components/reviews/completeReviewModal/completeReviewModal";
 import GoogleMap from "../../common/components/googleMap/googleMap";
+import LocationModal from "../../common/components/locations/location-modal/location-modal";
 import NavBar from "../../common/components/nav-bar/nav-bar";
 import serverRequest from "../../common/data/apiRequest/serverRequest/serverRequest";
 import getStyles from "./home-styles";
@@ -18,6 +19,8 @@ class Home extends React.Component {
     super(props);
     this.state = {
       isCompleteReviewModalShowing: false,
+      isLocationModalShowing: false,
+      selectedLocation: null,
       authenticationErrors: null,
       user: null,
       google: null,
@@ -39,6 +42,21 @@ class Home extends React.Component {
 
   handleLocationButtonClick = data => {
     console.log(data);
+  };
+
+  handleLocationSelect = selectedLocation => {
+    this.setState(state => {
+      return { ...state, isLocationModalShowing: true, selectedLocation };
+    });
+  };
+
+  toggleLocationModalOpenState = () => {
+    this.setState(state => {
+      return {
+        ...state,
+        isLocationModalShowing: !state.isLocationModalShowing
+      };
+    });
   };
 
   handleSearchButtonClick = () => {};
@@ -84,7 +102,10 @@ class Home extends React.Component {
               onLocationIconClick={this.handleLocationButtonClick}
               onSearchButtonClick={this.handleSearchButtonClick}
             />
-            <CompactLocationsList locations={this.state.data} />
+            <CompactLocationsList
+              locations={this.state.data}
+              onSelect={this.handleLocationSelect}
+            />
             <Button
               variant="outlined"
               size="small"
@@ -114,6 +135,11 @@ class Home extends React.Component {
           data={{ ...mockCompleteReviewResponse.data[0] }}
           isOpen={this.state.isCompleteReviewModalShowing}
           onClose={this.toggleCompleteReviewModalOpenState}
+        />
+        <LocationModal
+          data={{ ...mockCompleteReviewResponse.data[0] }}
+          isOpen={this.state.isLocationModalShowing}
+          onClose={this.toggleLocationModalOpenState}
         />
       </React.Fragment>
     );

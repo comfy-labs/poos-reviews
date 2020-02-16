@@ -11,6 +11,8 @@ import Typography from "@material-ui/core/Typography";
 import { withStyles } from "@material-ui/core/styles";
 import PooRating from "../../rater/poo-rating";
 
+const noop = () => {};
+
 class CompactLocationsList extends React.Component {
   static propTypes = {
     classes: PropTypes.object.isRequired,
@@ -20,25 +22,37 @@ class CompactLocationsList extends React.Component {
         name: PropTypes.string.isRequired,
         rating: PropTypes.number.isRequired
       })
-    ).isRequired
+    ).isRequired,
+    onSelect: PropTypes.func
+  };
+
+  static defaultProps = {
+    onSelect: noop
+  };
+
+  handleListItemClick = location => {
+    this.props.onSelect(location);
   };
 
   render() {
-    const { classes, locations } = this.props;
     return (
       <Paper>
         <List
-          className={classes.paper}
+          className={this.props.classes.list}
           dense
           subheader={
             <ListSubheader component="div">Places to Poo</ListSubheader>
           }
         >
-          {locations.map((location, index) => {
+          {this.props.locations.map((location, index) => {
             return (
               <div key={index}>
                 {index === 0 ? <Divider /> : null}
-                <ListItem alignItems="center">
+                <ListItem
+                  alignItems="center"
+                  button
+                  onClick={this.handleListItemClick}
+                >
                   <ListItemAvatar>
                     <PooRating isReadOnly value={location.rating} />
                   </ListItemAvatar>
@@ -80,7 +94,7 @@ class CompactLocationsList extends React.Component {
 }
 
 export default withStyles(theme => ({
-  paper: {
+  list: {
     backgroundColor: theme.palette.background.paper,
     marginBottom: theme.spacing(4),
     width: "100%"
