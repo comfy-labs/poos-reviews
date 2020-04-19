@@ -17,8 +17,8 @@ yarn-error.log*
 /server/node_modules
 /server/build
 
-# graphqlService
-/graphqlService/node_modules
+# graphql-service
+/graphql-service/node_modules
 
 # ghPages
 /ghPages/build

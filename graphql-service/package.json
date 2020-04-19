@@ -1,0 +1,32 @@
+{
+  "name": "graphql-service",
+  "version": "1.0.0",
+  "description": "GraphQL service",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "nodemon src/index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/comfy-labs/poos-reviews.git"
+  },
+  "author": "Michael Stromberg",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/comfy-labs/poos-reviews/issues"
+  },
+  "homepage": "https://github.com/comfy-labs/poos-reviews#readme",
+  "dependencies": {
+    "@googlemaps/google-maps-services-js": "^2.0.2",
+    "apollo-datasource": "^0.7.0",
+    "apollo-datasource-rest": "^0.7.0",
+    "apollo-server": "^2.10.1",
+    "graphql": "^14.6.0",
+    "isemail": "^3.2.0",
+    "lodash": "^4.17.15",
+    "nodemon": "^2.0.2",
+    "sequelize": "^5.21.5",
+    "sqlite3": "^4.1.1"
+  }
+}

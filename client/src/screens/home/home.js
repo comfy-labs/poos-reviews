@@ -4,7 +4,7 @@ import Script from "react-load-script";
 import Button from "@material-ui/core/Button";
 import { withStyles } from "@material-ui/core/styles";
 import CompactLocationsList from "../../common/components/locations/compactLocationsList/compactLocationsList";
-import CompleteReviewModal from "../../common/components/reviews/completeReviewModal/completeReviewModal";
+import CompleteReviewModal from "../../common/components/reviews/complete-review-modal/complete-review-modal";
 import GoogleMap from "../../common/components/googleMap/googleMap";
 import LocationModal from "../../common/components/locations/location-modal/location-modal";
 import NavBar from "../../common/components/nav-bar/nav-bar";
