@@ -40,7 +40,7 @@
     "husky": "^1.2.0",
     "prettier": "^1.14.3"
   },
-  "homepage": "https://comfy-labs.github.io/poos-reviews",
+  "homepage": "https://master.dmbz3z9fbskxr.amplifyapp.com/",
   "husky": {
     "hooks": {
       "pre-push": "yarn test"
