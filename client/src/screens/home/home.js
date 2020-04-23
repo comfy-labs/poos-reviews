@@ -86,7 +86,7 @@ class Home extends React.Component {
     return (
       <React.Fragment>
         <Script
-          url="https://maps.googleapis.com/maps/api/js?key=AIzaSyBo-Jx7q5tVqEhxtKm9AlnWfdTkv3kNUNo&libraries=places"
+          url={`https://maps.googleapis.com/maps/api/js?key=${process.env.REACT_APP_GOOGLE_MAPS_API_KEY}&libraries=places`}
           onLoad={this.handleScriptLoad}
         />
         <div className={this.props.classes.layout}>
